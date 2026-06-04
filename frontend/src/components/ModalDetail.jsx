@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import axios from 'axios'
+import { api, BACKEND } from '../utils/api'
 
 export default function ModalDetail({ item, onClose }){
   const [details, setDetails] = useState(item)
@@ -15,9 +15,9 @@ export default function ModalDetail({ item, onClose }){
     let mounted = true
     async function load(){
       try{
-        const base = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4001'
+        const base = BACKEND.replace(/\/$/,'')
         const route = item.mediaType==='tv' ? 'tv' : 'movie'
-        const r = await axios.get(`${base}/api/tmdb/${route}/${item.id}`)
+        const r = await api.get(`${base}/api/tmdb/${route}/${item.id}`)
         if(mounted) setDetails(d=> ({...d, ...r.data}))
       }catch(e){}
     }

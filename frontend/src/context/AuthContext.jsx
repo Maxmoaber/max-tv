@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import axios from 'axios'
+import { api, BACKEND } from '../utils/api'
 
-const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4001'
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }){
@@ -11,14 +10,14 @@ export function AuthProvider({ children }){
 
   useEffect(()=>{
     if(!token) { setLoading(false); return }
-    axios.get(`${BACKEND}/api/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
+    api.get(`${BACKEND}/api/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => setUser(r.data))
       .catch(() => { localStorage.removeItem('token'); setToken(null) })
       .finally(() => setLoading(false))
   }, [])
 
   const login = useCallback(async (email, password) => {
-    const r = await axios.post(`${BACKEND}/api/auth/login`, { email, password })
+    const r = await api.post(`${BACKEND}/api/auth/login`, { email, password })
     localStorage.setItem('token', r.data.token)
     setToken(r.data.token)
     setUser(r.data.user)
@@ -26,7 +25,7 @@ export function AuthProvider({ children }){
   }, [])
 
   const register = useCallback(async (email, password) => {
-    const r = await axios.post(`${BACKEND}/api/auth/register`, { email, password })
+    const r = await api.post(`${BACKEND}/api/auth/register`, { email, password })
     localStorage.setItem('token', r.data.token)
     setToken(r.data.token)
     setUser(r.data.user)

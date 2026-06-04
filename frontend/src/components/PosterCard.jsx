@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react'
-import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { getGenreNames } from '../utils/genres'
+import { api, BACKEND } from '../utils/api'
 
 export default function PosterCard({ item, onClick }){
   const { token } = useAuth()
@@ -34,9 +34,9 @@ export default function PosterCard({ item, onClick }){
       fetchTimer.current = setTimeout(async ()=>{
         if(miniSrc) return
         try{
-          const base = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4001'
+          const base = BACKEND.replace(/\/$/,'')
           const route = item.mediaType==='tv' ? 'tv' : 'movie'
-          const r = await axios.get(`${base}/api/tmdb/${route}/${item.id}`)
+          const r = await api.get(`${base}/api/tmdb/${route}/${item.id}`)
           if(r.data && r.data.trailerKey){
             setMiniSrc(`https://www.youtube.com/embed/${r.data.trailerKey}?autoplay=1&mute=1&controls=0&loop=1&playlist=${r.data.trailerKey}`)
           }
@@ -59,15 +59,15 @@ export default function PosterCard({ item, onClick }){
     e.stopPropagation()
     if(!token || favLoading) return
     setFavLoading(true)
-    const base = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4001'
+    const base = BACKEND.replace(/\/$/,'')
     try{
       if(isFav && favId){
-        await axios.delete(`${base}/api/favorites/${favId}`, { headers: { Authorization: `Bearer ${token}` } })
+        await api.delete(`${base}/api/favorites/${favId}`, { headers: { Authorization: `Bearer ${token}` } })
         setIsFav(false)
         setFavId(null)
         addToast('Eliminado de favoritos', 'info')
       }else{
-        const r = await axios.post(`${base}/api/favorites`, {
+        const r = await api.post(`${base}/api/favorites`, {
           tmdbId: item.id, mediaType: item.mediaType, title: item.title, poster: item.poster
         }, { headers: { Authorization: `Bearer ${token}` } })
         setIsFav(true)

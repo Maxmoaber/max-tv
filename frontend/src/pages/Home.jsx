@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Carousel from '../components/Carousel'
 import ModalDetail from '../components/ModalDetail'
 import { SkeletonCarousel, SkeletonHero } from '../components/Skeleton'
-
-const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4001'
+import { getDemoTrending, getDemoGenre } from '../utils/demoData'
+import { api, BACKEND } from '../utils/api'
 
 function Hero({ items, onMoreInfo }){
   const [idx, setIdx] = useState(0)
@@ -25,7 +24,7 @@ function Hero({ items, onMoreInfo }){
       try{
         const base = BACKEND.replace(/\/$/,'')
         const route = item.mediaType==='tv' ? 'tv' : 'movie'
-        const r = await axios.get(`${base}/api/tmdb/${route}/${item.id}`)
+        const r = await api.get(`${base}/api/tmdb/${route}/${item.id}`)
         if(mounted && r.data?.trailerKey) setTrailerKey(r.data.trailerKey)
       }catch(e){}
     }
@@ -112,22 +111,28 @@ export default function Home(){
     async function load(){
       const base = BACKEND.replace(/\/$/,'')
       try{
-        const t = await axios.get(`${base}/api/tmdb/trending`)
+        const t = await api.get(`${base}/api/tmdb/trending`)
         setTrending(t.data.slice(0,20))
         setHeroItems(t.data.slice(0,4))
       }catch(e){
-        const r = await axios.get(`${base}/api/demo/movies`)
-        const items = r.data || []
-        setTrending(items.slice(0,20))
-        setHeroItems(items.slice(0,4))
+        try {
+          const r = await api.get(`${base}/api/demo/movies`)
+          const items = r.data || []
+          setTrending(items.slice(0,20))
+          setHeroItems(items.slice(0,4))
+        } catch(e2) {
+          const items = getDemoTrending()
+          setTrending(items.slice(0,20))
+          setHeroItems(items.slice(0,4))
+        }
       }
       const results = await Promise.allSettled(
-        GENRES.map(g => axios.get(`${base}/api/tmdb/genre/${g.id}`))
+        GENRES.map(g => api.get(`${base}/api/tmdb/genre/${g.id}`))
       )
       const full = {}
       results.forEach((r, i) => {
         if (r.status === 'fulfilled') full[GENRES[i].id] = r.value.data
-        else full[GENRES[i].id] = []
+        else full[GENRES[i].id] = getDemoGenre(GENRES[i].id)
       })
       setGenreFull(full)
       const limits = {}
@@ -145,7 +150,7 @@ export default function Home(){
     if (current >= full.length) {
       try {
         const base = BACKEND.replace(/\/$/,'')
-        const r = await axios.get(`${base}/api/tmdb/genre/${genre.id}`)
+        const r = await api.get(`${base}/api/tmdb/genre/${genre.id}`)
         const merged = [...full, ...r.data]
         setGenreFull(p => ({ ...p, [genre.id]: merged }))
       } catch(e) {}

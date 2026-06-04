@@ -9,7 +9,8 @@ const jwt = require('jsonwebtoken');
 const prisma = new PrismaClient();
 const app = express();
 
-const PORT = process.env.PORT || 4000;
+const PORT = parseInt(process.env.PORT, 10) || 4000;
+const HOST = process.env.HOST || '0.0.0.0';
 const JWT_SECRET = process.env.JWT_SECRET || 'devsecret';
 
 app.use(cors({ origin: true, credentials: true }));
@@ -122,7 +123,8 @@ app.get('/api/demo/movies/:id', (req, res) => {
   res.json(item);
 });
 
-app.get('/', (req, res) => res.json({ ok: true }));
+app.get('/health', (req, res) => res.json({ status: 'ok', uptime: process.uptime() }));
+app.get('/', (req, res) => res.json({ ok: true, service: 'MaxTV Backend' }));
 
 // TMDb proxy endpoints (use backend TMDB_API_KEY). If key missing, fall back to demo items.
 let tmdbService = null;
@@ -197,6 +199,6 @@ app.get('/api/tmdb/genre/:genreId', async (req, res) => {
 });
 
 const srv = http.createServer(app);
-srv.listen({ port: PORT, reuseAddr: true }, () => {
-  console.log(`Backend running on http://localhost:${PORT}`);
+srv.listen(PORT, HOST, () => {
+  console.log(`Backend running on http://${HOST}:${PORT}`);
 });

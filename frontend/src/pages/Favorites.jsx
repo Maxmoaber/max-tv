@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import PosterCard from '../components/PosterCard'
 import ModalDetail from '../components/ModalDetail'
 import { SkeletonGrid } from '../components/Skeleton'
-
-const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4001'
+import { api, BACKEND } from '../utils/api'
 
 export default function Favorites(){
   const { user, token } = useAuth()
@@ -23,7 +21,7 @@ export default function Favorites(){
     if(!token) { navigate('/auth'); return }
     async function load(){
       try{
-        const r = await axios.get(`${BACKEND}/api/favorites`, { headers: { Authorization: `Bearer ${token}` } })
+        const r = await api.get(`${BACKEND}/api/favorites`, { headers: { Authorization: `Bearer ${token}` } })
         const mapped = r.data.map(f => ({
           id: f.tmdbId,
           title: f.title,

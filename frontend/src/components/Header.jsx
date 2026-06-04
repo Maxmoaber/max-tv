@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
+import { api, BACKEND } from '../utils/api'
 
 export default function Header({ onSearchResult }){
   const { user, logout } = useAuth()
@@ -16,8 +16,8 @@ export default function Header({ onSearchResult }){
     if (!q) { setResults([]); return }
     const t = setTimeout(async ()=>{
       try{
-        const base = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4001'
-        const r = await axios.get(`${base}/api/tmdb/search?q=${encodeURIComponent(q)}`)
+        const base = BACKEND.replace(/\/$/,'')
+        const r = await api.get(`${base}/api/tmdb/search?q=${encodeURIComponent(q)}`)
         setResults(r.data.slice(0,8))
         if (onSearchResult) onSearchResult(r.data)
       }catch(e){ setResults([]) }
