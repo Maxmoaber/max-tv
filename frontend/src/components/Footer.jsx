@@ -47,6 +47,8 @@ export default function Footer(){
             >
               Emiliano González
             </a>
+            {" & "}
+            <span className="text-gray-400">Roque Manuel</span>
           </div>
         </div>
       </div>
