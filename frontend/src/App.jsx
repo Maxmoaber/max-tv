@@ -6,6 +6,7 @@ import { ToastProvider } from './context/ToastContext'
 import Home from './pages/Home'
 import Auth from './pages/Auth'
 import Favorites from './pages/Favorites'
+import SearchResults from './pages/SearchResults'
 import NotFound from './pages/NotFound'
 
 function PageWrap({ children }) {
@@ -32,6 +33,7 @@ export default function App(){
               <Route path="/" element={<PageWrap><Home/></PageWrap>} />
               <Route path="/auth" element={<PageWrap><Auth/></PageWrap>} />
               <Route path="/favorites" element={<PageWrap><Favorites/></PageWrap>} />
+              <Route path="/search" element={<PageWrap><SearchResults/></PageWrap>} />
               <Route path="*" element={<PageWrap><NotFound/></PageWrap>} />
             </Routes>
           </AnimatePresence>

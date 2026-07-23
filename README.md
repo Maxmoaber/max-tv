@@ -40,6 +40,9 @@ Pasos para ejecutar en desarrollo
 
    Por defecto Vite te dirá el puerto local (p.ej. http://localhost:5173)
 
+Demo
+- Frontend (Netlify): https://spiffy-mousse-e419c1.netlify.app/
+
 Notas
 - El backend usa SQLite por defecto para desarrollo (DATABASE_URL en .env).
 - Para producción cambia a Postgres y configura las variables.

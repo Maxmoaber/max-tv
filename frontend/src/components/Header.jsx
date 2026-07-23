@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { api, BACKEND } from '../utils/api'
@@ -7,10 +7,22 @@ import { api, BACKEND } from '../utils/api'
 export default function Header({ onSearchResult }){
   const { user, logout } = useAuth()
   const { addToast } = useToast()
+  const navigate = useNavigate()
   const [q, setQ] = useState('')
   const [results, setResults] = useState([])
   const [focused, setFocused] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
+
+  const handleSearch = () => {
+    if (q.trim()) {
+      navigate(`/search?q=${encodeURIComponent(q.trim())}`)
+      setFocused(false)
+    }
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') handleSearch()
+  }
 
   useEffect(()=>{
     if (!q) { setResults([]); return }
@@ -33,7 +45,7 @@ export default function Header({ onSearchResult }){
         <div className="flex-1 relative max-w-xl">
           <div className="relative">
             <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            <input value={q} onChange={e=>setQ(e.target.value)} onFocus={()=>setFocused(true)} onBlur={()=>setTimeout(()=>setFocused(false),200)} placeholder="Buscar películas, series, actores..." className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1a2533] border border-[#2a3a4a] text-white placeholder-gray-400 focus:outline-none focus:border-[#e50914] focus:ring-1 focus:ring-[#e50914] transition-all text-sm" />
+            <input value={q} onChange={e=>setQ(e.target.value)} onFocus={()=>setFocused(true)} onBlur={()=>setTimeout(()=>setFocused(false),200)} onKeyDown={handleKeyDown} placeholder="Buscar películas, series, actores..." className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1a2533] border border-[#2a3a4a] text-white placeholder-gray-400 focus:outline-none focus:border-[#e50914] focus:ring-1 focus:ring-[#e50914] transition-all text-sm" />
           </div>
           {focused && q && (
             <div className="absolute left-0 right-0 top-full mt-2 bg-[#0f1923] border border-[#1e2a36] rounded-xl shadow-2xl overflow-hidden z-50">
@@ -45,7 +57,7 @@ export default function Header({ onSearchResult }){
                   No se encontraron resultados para "{q}"
                 </div>
               ) : results.map(r=> (
-                <div key={`${r.mediaType}-${r.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-[#1a2533] cursor-pointer transition-colors border-b border-[#1a2533] last:border-0">
+                <div key={`${r.mediaType}-${r.id}`} onClick={()=>{ navigate(`/search?q=${encodeURIComponent(r.title)}`); setFocused(false) }} className="flex items-center gap-3 px-4 py-3 hover:bg-[#1a2533] cursor-pointer transition-colors border-b border-[#1a2533] last:border-0">
                   <img src={r.poster || '/placeholder.png'} alt="" className="w-10 h-14 object-cover rounded flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-sm truncate">{r.title}</div>

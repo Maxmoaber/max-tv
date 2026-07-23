@@ -91,11 +91,18 @@ function Hero({ items, onMoreInfo }){
   )
 }
 
-const GENRES = [
+const GENRES_ES = [
   { id: 35, name: 'Comedia' },
   { id: 16, name: 'Animación' },
   { id: 28, name: 'Acción' },
   { id: 878, name: 'Ciencia Ficción' }
+]
+
+const GENRES_EN = [
+  { id: 35, name: 'Comedy' },
+  { id: 16, name: 'Animation' },
+  { id: 28, name: 'Action' },
+  { id: 878, name: 'Science Fiction' }
 ]
 
 export default function Home(){
@@ -106,12 +113,24 @@ export default function Home(){
   const [loadingMore, setLoadingMore] = useState(null)
   const [selected, setSelected] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [language, setLanguage] = useState('es-ES')
+
+  const GENRES = language === 'es-ES' ? GENRES_ES : GENRES_EN
+
+  const toggleLanguage = () => {
+    const newLang = language === 'es-ES' ? 'en-US' : 'es-ES'
+    setLanguage(newLang)
+    setTrending([])
+    setHeroItems([])
+    setGenreFull({})
+    setLoading(true)
+  }
 
   useEffect(()=>{
     async function load(){
       const base = BACKEND.replace(/\/$/,'')
       try{
-        const t = await api.get(`${base}/api/tmdb/trending`)
+        const t = await api.get(`${base}/api/tmdb/trending?language=${language}`)
         setTrending(t.data.slice(0,20))
         setHeroItems(t.data.slice(0,4))
       }catch(e){
@@ -127,7 +146,7 @@ export default function Home(){
         }
       }
       const results = await Promise.allSettled(
-        GENRES.map(g => api.get(`${base}/api/tmdb/genre/${g.id}`))
+        GENRES.map(g => api.get(`${base}/api/tmdb/genre/${g.id}?language=${language}`))
       )
       const full = {}
       results.forEach((r, i) => {
@@ -141,7 +160,7 @@ export default function Home(){
       setLoading(false)
     }
     load()
-  },[])
+  },[language])
 
   const handleViewMore = async (genre) => {
     setLoadingMore(genre.id)
@@ -150,7 +169,7 @@ export default function Home(){
     if (current >= full.length) {
       try {
         const base = BACKEND.replace(/\/$/,'')
-        const r = await api.get(`${base}/api/tmdb/genre/${genre.id}`)
+        const r = await api.get(`${base}/api/tmdb/genre/${genre.id}?language=${language}`)
         const merged = [...full, ...r.data]
         setGenreFull(p => ({ ...p, [genre.id]: merged }))
       } catch(e) {}
@@ -162,6 +181,15 @@ export default function Home(){
   return (
     <>
       <Header />
+      <div className="flex justify-end max-w-7xl mx-auto px-6 pt-4">
+        <button
+          onClick={toggleLanguage}
+          className="px-4 py-2 rounded-lg bg-[#1a2533] border border-[#2a3a4a] text-sm text-gray-300 hover:bg-[#253545] hover:text-white transition-colors flex items-center gap-2"
+        >
+          <span className="text-base">{language === 'es-ES' ? '🇪🇸' : '🇺🇸'}</span>
+          {language === 'es-ES' ? 'Español' : 'English'}
+        </button>
+      </div>
       {loading ? <SkeletonHero /> : <Hero items={heroItems} onMoreInfo={(i)=> setSelected(i)} />}
       <div className="max-w-7xl mx-auto px-6 -mt-8 relative z-10">
         {loading ? (
@@ -190,7 +218,7 @@ export default function Home(){
       </div>
       <Footer />
       {selected && (
-        <ModalDetail item={selected} onClose={()=>setSelected(null)} />
+        <ModalDetail item={selected} onClose={()=>setSelected(null)} language={language} />
       )}
     </>
   )
