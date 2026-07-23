@@ -12,11 +12,11 @@ function fullImage(path, size = 'w300'){
   return `https://image.tmdb.org/t/p/${size}${path}`;
 }
 
-async function trending(media = 'all', page = 1){
-  const key = `trending:${media}:${page}`;
+async function trending(media = 'all', page = 1, language = 'es-ES'){
+  const key = `trending:${media}:${page}:${language}`;
   const cached = cache.get(key);
   if(cached) return cached;
-  const r = await client.get(`/trending/${media}/week`, { params: { page } });
+  const r = await client.get(`/trending/${media}/week`, { params: { page, language } });
   const items = r.data.results.map(i=>({
     id: i.id,
     title: i.title || i.name,
@@ -30,11 +30,11 @@ async function trending(media = 'all', page = 1){
   return items;
 }
 
-async function search(q, page=1){
-  const key = `search:${q}:${page}`;
+async function search(q, page=1, language='es-ES'){
+  const key = `search:${q}:${page}:${language}`;
   const cached = cache.get(key);
   if(cached) return cached;
-  const r = await client.get('/search/multi', { params: { query: q, page } });
+  const r = await client.get('/search/multi', { params: { query: q, page, language } });
   const items = r.data.results.map(i=>({
     id: i.id,
     title: i.title || i.name,
@@ -47,11 +47,11 @@ async function search(q, page=1){
   return items;
 }
 
-async function movieDetails(id){
-  const key = `movie:${id}`;
+async function movieDetails(id, language = 'es-ES'){
+  const key = `movie:${id}:${language}`;
   const cached = cache.get(key);
   if(cached) return cached;
-  const r = await client.get(`/movie/${id}`, { params: { append_to_response: 'videos,images,credits' } });
+  const r = await client.get(`/movie/${id}`, { params: { append_to_response: 'videos,images,credits', language } });
   const data = r.data;
   const trailer = (data.videos && data.videos.results && data.videos.results.find(v=>v.site==='YouTube' && v.type==='Trailer')) || null;
   const payload = {
@@ -68,11 +68,11 @@ async function movieDetails(id){
   return payload;
 }
 
-async function tvDetails(id){
-  const key = `tv:${id}`;
+async function tvDetails(id, language = 'es-ES'){
+  const key = `tv:${id}:${language}`;
   const cached = cache.get(key);
   if(cached) return cached;
-  const r = await client.get(`/tv/${id}`, { params: { append_to_response: 'videos,images,credits' } });
+  const r = await client.get(`/tv/${id}`, { params: { append_to_response: 'videos,images,credits', language } });
   const data = r.data;
   const trailer = (data.videos && data.videos.results && data.videos.results.find(v=>v.site==='YouTube' && v.type==='Trailer')) || null;
   const payload = {
@@ -89,11 +89,11 @@ async function tvDetails(id){
   return payload;
 }
 
-async function discover(genreId, page = 1){
-  const key = `discover:${genreId}:${page}`;
+async function discover(genreId, page = 1, language = 'es-ES'){
+  const key = `discover:${genreId}:${page}:${language}`;
   const cached = cache.get(key);
   if(cached) return cached;
-  const r = await client.get('/discover/movie', { params: { with_genres: genreId, page, sort_by: 'popularity.desc' } });
+  const r = await client.get('/discover/movie', { params: { with_genres: genreId, page, sort_by: 'popularity.desc', language } });
   const items = r.data.results.map(i=>({
     id: i.id,
     title: i.title,

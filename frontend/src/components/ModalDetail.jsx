@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { api, BACKEND } from '../utils/api'
 
-export default function ModalDetail({ item, onClose }){
+export default function ModalDetail({ item, onClose, language = 'es-ES' }){
   const [details, setDetails] = useState(item)
 
   useEffect(()=>{
@@ -17,13 +17,13 @@ export default function ModalDetail({ item, onClose }){
       try{
         const base = BACKEND.replace(/\/$/,'')
         const route = item.mediaType==='tv' ? 'tv' : 'movie'
-        const r = await api.get(`${base}/api/tmdb/${route}/${item.id}`)
+        const r = await api.get(`${base}/api/tmdb/${route}/${item.id}?language=${language}`)
         if(mounted) setDetails(d=> ({...d, ...r.data}))
       }catch(e){}
     }
     load()
     return ()=> mounted = false
-  },[item])
+  },[item, language])
 
   return (
     <AnimatePresence>

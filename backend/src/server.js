@@ -139,7 +139,8 @@ app.get('/api/tmdb/trending', async (req, res) => {
   try {
     const media = req.query.media || 'all';
     const page = req.query.page || 1;
-    const items = await tmdbService.trending(media, page);
+    const language = req.query.language || 'es-ES';
+    const items = await tmdbService.trending(media, page, language);
     res.json(items);
   } catch (e) {
     console.error(e);
@@ -153,7 +154,8 @@ app.get('/api/tmdb/search', async (req, res) => {
     const q = req.query.q;
     if (!q) return res.status(400).json({ error: 'missing q' });
     const page = req.query.page || 1;
-    const items = await tmdbService.search(q, page);
+    const language = req.query.language || 'es-ES';
+    const items = await tmdbService.search(q, page, language);
     res.json(items);
   } catch (e) {
     console.error(e);
@@ -165,7 +167,8 @@ app.get('/api/tmdb/movie/:id', async (req, res) => {
   if (!process.env.TMDB_API_KEY || !tmdbService) return res.status(404).json({ error: 'not available' });
   try {
     const id = req.params.id;
-    const data = await tmdbService.movieDetails(id);
+    const language = req.query.language || 'es-ES';
+    const data = await tmdbService.movieDetails(id, language);
     res.json(data);
   } catch (e) {
     console.error(e);
@@ -177,7 +180,8 @@ app.get('/api/tmdb/tv/:id', async (req, res) => {
   if (!process.env.TMDB_API_KEY || !tmdbService) return res.status(404).json({ error: 'not available' });
   try {
     const id = req.params.id;
-    const data = await tmdbService.tvDetails(id);
+    const language = req.query.language || 'es-ES';
+    const data = await tmdbService.tvDetails(id, language);
     res.json(data);
   } catch (e) {
     console.error(e);
@@ -190,7 +194,8 @@ app.get('/api/tmdb/genre/:genreId', async (req, res) => {
   try {
     const genreId = parseInt(req.params.genreId);
     const page = req.query.page || 1;
-    const items = await tmdbService.discover(genreId, page);
+    const language = req.query.language || 'es-ES';
+    const items = await tmdbService.discover(genreId, page, language);
     res.json(items);
   } catch (e) {
     console.error(e);
