@@ -1,3 +1,22 @@
+/*
+ * ====================================================================
+ *  Skeleton.jsx — Componentes de carga (skeleton / shimmer)
+ * ====================================================================
+ *
+ *  Estos componentes se muestran temporalmente mientras los datos
+ *  están cargando. Mejoran la experiencia de usuario (UX) al indicar
+ *  que el contenido está por venir, en lugar de mostrar una pantalla
+ *  en blanco.
+ *
+ *  Componentes exportados:
+ *    - SkeletonCard:      Una tarjeta individual (póster placeholder)
+ *    - SkeletonCarousel:  Un carrusel completo (varias SkeletonCard)
+ *    - SkeletonHero:      El hero principal (banner placeholder)
+ *    - SkeletonGrid:      Una grilla de tarjetas (para favoritos)
+ *
+ *  Tecnología: Tailwind CSS (animate-pulse)
+ */
+
 import React from 'react'
 
 export function SkeletonCard() {

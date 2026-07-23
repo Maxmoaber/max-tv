@@ -1,3 +1,20 @@
+/*
+ * ====================================================================
+ *  Footer.jsx — Pie de página de Max.tv
+ * ====================================================================
+ *
+ *  Componente de pie de página que aparece en la página principal
+ *  (Home) y en la página de favoritos. Contiene:
+ *
+ *    - Nombre y descripción de la plataforma
+ *    - Enlaces de navegación
+ *    - Enlaces legales
+ *    - Información de copyright
+ *    - Créditos de desarrollo
+ *
+ *  Tecnología: React con Tailwind CSS
+ */
+
 import React from 'react'
 
 export default function Footer(){

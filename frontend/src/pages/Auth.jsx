@@ -1,3 +1,24 @@
+/*
+ * ====================================================================
+ *  Auth.jsx — Página de inicio de sesión y registro
+ * ====================================================================
+ *
+ *  Esta página permite al usuario:
+ *    - Iniciar sesión con email y contraseña
+ *    - Crear una cuenta nueva
+ *
+ *  Tiene dos modos que se alternan con tabs: 'login' y 'register'.
+ *  Al enviar el formulario, llama a AuthContext.login() o .register()
+ *  que internamente hacen peticiones POST al backend.
+ *
+ *  Si el usuario ya está autenticado, redirige automáticamente al home.
+ *
+ *  Validaciones:
+ *    - Email y contraseña obligatorios
+ *    - Contraseña mínimo 6 caracteres
+ *    - Muestra errores del backend (ej. "Email already exists")
+ */
+
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
@@ -13,6 +34,7 @@ export default function Auth(){
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // Si ya está autenticado, redirigir al home
   if(user){ navigate('/'); return null }
 
   const submit = async (e) => {
@@ -49,6 +71,7 @@ export default function Auth(){
         </div>
 
         <div className="bg-gradient-to-b from-[#121a24] to-[#0f1923] rounded-2xl border border-[#1e2a36] p-8 shadow-2xl">
+          {/* Tabs para cambiar entre login y registro */}
           <div className="flex mb-6 bg-[#0a0e14] rounded-lg p-1">
             <button onClick={()=>{ setMode('login'); setError('') }} className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all ${mode === 'login' ? 'bg-[#e50914] text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}>Iniciar sesión</button>
             <button onClick={()=>{ setMode('register'); setError('') }} className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all ${mode === 'register' ? 'bg-[#e50914] text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}>Crear cuenta</button>
@@ -71,6 +94,7 @@ export default function Auth(){
               </div>
             </div>
 
+            {/* Mensaje de error */}
             {error && (
               <div className="bg-[#e50914]/10 border border-[#e50914]/30 rounded-lg px-4 py-2.5 text-sm text-[#e50914] flex items-center gap-2">
                 <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>

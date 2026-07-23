@@ -1,3 +1,22 @@
+/*
+ * ====================================================================
+ *  ToastContext.jsx — Sistema de notificaciones (toasts)
+ * ====================================================================
+ *
+ *  Implementa notificaciones temporales (toasts) que aparecen en la
+ *  esquina superior derecha y desaparecen automáticamente.
+ *
+ *  Usa React Context para que cualquier componente pueda mostrar un
+ *  toast con solo llamar a addToast(mensaje, tipo).
+ *
+ *  Tipos de toast:
+ *    - 'success' → verde (operación exitosa)
+ *    - 'error'   → rojo (error)
+ *    - 'info'    → gris (información)
+ *
+ *  Cada toast se auto-destruye después de 3.5 segundos.
+ */
+
 import React, { createContext, useContext, useState, useCallback } from 'react'
 
 const ToastContext = createContext(null)
@@ -22,6 +41,7 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={{ addToast }}>
       {children}
+      {/* Renderizado de los toasts activos */}
       <div className="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none">
         {toasts.map(t => (
           <div

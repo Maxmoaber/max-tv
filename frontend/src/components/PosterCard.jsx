@@ -1,3 +1,31 @@
+/*
+ * ====================================================================
+ *  PosterCard.jsx — Tarjeta de póster interactiva
+ * ====================================================================
+ *
+ *  Componente individual que representa una película o serie en forma
+ *  de tarjeta con póster. Es el componente más complejo de la UI
+ *  porque tiene múltiples estados interactivos:
+ *
+ *  Estados:
+ *    - Normal: Muestra el póster con badge de tipo y puntuación
+ *    - Hover: Se expande (170px → 360px) y muestra:
+ *        • Tráiler de YouTube (si está disponible)
+ *        • Overlay con título, puntuación, géneros
+ *        • Botones "Ver" y "Favoritos"
+ *    - Favorito: Muestra marcador rojo si está guardado
+ *    - Carga: Muestra shimmer effect (en PosterCard no, en Skeleton sí)
+ *
+ *  Funcionalidad:
+ *    - Al hacer hover, carga el tráiler vía API (con debounce)
+ *    - El tráiler se auto-reproduce muteado
+ *    - Botón para alternar mute
+ *    - Botón de favoritos (requiere autenticación)
+ *    - El overlay se oculta automáticamente tras 2.5s de inactividad
+ *
+ *  Tecnologías: React, Tailwind CSS, YouTube iframe API
+ */
+
 import React, { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
@@ -18,19 +46,23 @@ export default function PosterCard({ item, onClick }){
   const fetchTimer = useRef()
   const idleTimer = useRef()
 
+  // Al salir del hover, resetear estado
   useEffect(() => { if(!hover){ setMiniSrc(null); setShowOverlay(true) } }, [hover])
 
+  // Resetear temporizador de inactividad para el overlay
   const resetIdle = () => {
     clearTimeout(idleTimer.current)
     setShowOverlay(true)
     idleTimer.current = setTimeout(() => setShowOverlay(false), 2500)
   }
 
+  // Iniciar hover con debounce de 200ms antes de expandir
   const startHover = ()=>{
     hoverTimer.current = setTimeout(()=>{
       setHover(true)
       setShowOverlay(true)
       resetIdle()
+      // Cargar tráiler con debounce adicional de 400ms
       fetchTimer.current = setTimeout(async ()=>{
         if(miniSrc) return
         try{
@@ -55,6 +87,7 @@ export default function PosterCard({ item, onClick }){
 
   const handleMouseMove = () => { if(hover) resetIdle() }
 
+  // Alternar favorito (agregar/eliminar)
   const toggleFav = async (e) => {
     e.stopPropagation()
     if(!token || favLoading) return
@@ -91,7 +124,7 @@ export default function PosterCard({ item, onClick }){
       onMouseMove={handleMouseMove}
     >
       <div className="relative overflow-hidden rounded-xl bg-[#121a24] w-full h-[255px] ring-1 ring-white/10">
-        {/* poster */}
+        {/* Póster de fondo */}
         <img
           src={imgSrc}
           alt={item.title}
@@ -99,7 +132,7 @@ export default function PosterCard({ item, onClick }){
           loading="lazy"
         />
 
-        {/* trailer */}
+        {/* Tráiler (se muestra al hacer hover si está disponible) */}
         {miniSrc && hover && (
           <div className="absolute inset-0 z-10 rounded-xl overflow-hidden">
             <iframe key={String(muted)} src={miniSrc.replace('mute=1', muted ? 'mute=1' : 'mute=0')} frameBorder="0" allow="autoplay; encrypted-media" className="absolute inset-0 w-full h-full pointer-events-none"></iframe>
@@ -107,7 +140,7 @@ export default function PosterCard({ item, onClick }){
           </div>
         )}
 
-        {/* overlay (auto-hide after 2.5s idle) */}
+        {/* Overlay con información y botones (aparece en hover) */}
         {hover && showOverlay && (
           <div className="absolute inset-0 z-20 flex flex-col justify-end bg-gradient-to-t from-black/60 via-black/10 to-transparent p-4 transition-opacity duration-200">
             {miniSrc && (
@@ -164,7 +197,7 @@ export default function PosterCard({ item, onClick }){
           </div>
         )}
 
-        {/* badges */}
+        {/* Badges superiores (visibles solo cuando NO está en hover) */}
         {!hover && (
           <div className="absolute top-2 left-2 z-10 flex items-center gap-1.5">
             <div className="bg-black/60 px-1.5 py-0.5 rounded text-[10px] font-semibold text-white">
@@ -179,7 +212,7 @@ export default function PosterCard({ item, onClick }){
           </div>
         )}
 
-        {/* bookmark */}
+        {/* Marcador de favorito (visible cuando NO está en hover) */}
         {isFav && !hover && (
           <div className="absolute top-2 right-2 z-10">
             <svg className="w-5 h-5 text-[#e50914]" fill="currentColor" viewBox="0 0 24 24"><path d="M5 4a2 2 0 00-2 2v14l9-4 9 4V6a2 2 0 00-2-2H5z"/></svg>

@@ -1,3 +1,25 @@
+/*
+ * ====================================================================
+ *  App.jsx — Componente raíz con las rutas de la aplicación
+ * ====================================================================
+ *
+ *  Este componente define la estructura principal de la app:
+ *    1. AuthProvider: Provee el contexto de autenticación a toda la app.
+ *    2. ToastProvider: Provee el sistema de notificaciones (toasts).
+ *    3. <Routes>: Define las rutas disponibles en la aplicación.
+ *       Cada ruta carga una página específica con una transición
+ *       animada (framer-motion).
+ *
+ *  Rutas definidas:
+ *    /          → Home (página principal)
+ *    /auth      → Auth (inicio de sesión / registro)
+ *    /favorites → Favorites (favoritos del usuario)
+ *    /search    → SearchResults (resultados de búsqueda)
+ *    *          → NotFound (página 404)
+ *
+ *  Tecnologías: React Router DOM (v6), Framer Motion (animaciones)
+ */
+
 import React from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -9,6 +31,10 @@ import Favorites from './pages/Favorites'
 import SearchResults from './pages/SearchResults'
 import NotFound from './pages/NotFound'
 
+/**
+ * PageWrap: Envuelve cada página con una animación de transición.
+ * framer-motion aplica fade-in + slide-up al entrar y fade-out + slide-up al salir.
+ */
 function PageWrap({ children }) {
   return (
     <motion.div

@@ -1,3 +1,29 @@
+/*
+ * ====================================================================
+ *  Header.jsx — Barra de navegación principal
+ * ====================================================================
+ *
+ *  Este componente se muestra en la parte superior de todas las
+ *  páginas. Contiene:
+ *
+ *    1. Logo "Max.tv" (enlace al home)
+ *    2. Barra de búsqueda con sugerencias en tiempo real
+ *       - Al escribir, hace debounce de 300ms y consulta TMDb
+ *       - Muestra hasta 8 sugerencias en un dropdown
+ *       - Al hacer Enter o click en una sugerencia, navega a /search
+ *    3. Enlace a "Favoritos"
+ *    4. Menú de usuario (avatar con inicial, menú desplegable)
+ *       - Usuario autenticado: muestra inicial, menú con email,
+ *         favoritos y cerrar sesión
+ *       - Usuario no autenticado: botón "Iniciar sesión"
+ *
+ *  Tecnologías:
+ *    - React Router (Link, useNavigate)
+ *    - Contexto de autenticación (useAuth)
+ *    - Contexto de notificaciones (useToast)
+ *    - Axios para peticiones al backend
+ */
+
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
@@ -13,6 +39,7 @@ export default function Header({ onSearchResult }){
   const [focused, setFocused] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
 
+  // Navegar a la página de resultados al presionar Enter
   const handleSearch = () => {
     if (q.trim()) {
       navigate(`/search?q=${encodeURIComponent(q.trim())}`)
@@ -24,13 +51,14 @@ export default function Header({ onSearchResult }){
     if (e.key === 'Enter') handleSearch()
   }
 
+  // Búsqueda en tiempo real con debounce (dropdown de sugerencias)
   useEffect(()=>{
     if (!q) { setResults([]); return }
     const t = setTimeout(async ()=>{
       try{
         const base = BACKEND.replace(/\/$/,'')
         const r = await api.get(`${base}/api/tmdb/search?q=${encodeURIComponent(q)}`)
-        setResults(r.data.slice(0,8))
+        setResults(r.data.slice(0,8))  // Solo las primeras 8 sugerencias
         if (onSearchResult) onSearchResult(r.data)
       }catch(e){ setResults([]) }
     },300)
@@ -40,13 +68,16 @@ export default function Header({ onSearchResult }){
   return (
     <header className="bg-gradient-to-r from-[#0a0e14] to-[#121a24] text-white shadow-lg sticky top-0 z-40 border-b border-[#1e2a36]">
       <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-8">
+        {/* Logo */}
         <Link to="/" className="text-3xl font-extrabold tracking-tight text-[#e50914] flex-shrink-0 no-underline">Max.tv</Link>
 
+        {/* Barra de búsqueda */}
         <div className="flex-1 relative max-w-xl">
           <div className="relative">
             <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             <input value={q} onChange={e=>setQ(e.target.value)} onFocus={()=>setFocused(true)} onBlur={()=>setTimeout(()=>setFocused(false),200)} onKeyDown={handleKeyDown} placeholder="Buscar películas, series, actores..." className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1a2533] border border-[#2a3a4a] text-white placeholder-gray-400 focus:outline-none focus:border-[#e50914] focus:ring-1 focus:ring-[#e50914] transition-all text-sm" />
           </div>
+          {/* Dropdown de sugerencias */}
           {focused && q && (
             <div className="absolute left-0 right-0 top-full mt-2 bg-[#0f1923] border border-[#1e2a36] rounded-xl shadow-2xl overflow-hidden z-50">
               {results.length === 0 ? (
@@ -72,12 +103,14 @@ export default function Header({ onSearchResult }){
           )}
         </div>
 
+        {/* Navegación */}
         <nav className="flex items-center gap-4 text-sm flex-shrink-0">
           <Link to="/favorites" className="px-4 py-2 rounded-lg bg-[#1a2533] hover:bg-[#253545] transition-colors flex items-center gap-2 no-underline text-white">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
             Favoritos
           </Link>
           {user ? (
+            /* Menú de usuario autenticado */
             <div className="relative">
               <button
                 onClick={() => setShowMenu(v => !v)}

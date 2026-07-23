@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Max.tv — Documentación del Proyecto</title>
+  <style>
+    :root {
+      --bg: #0a0e14;
+      --bg2: #121a24;
+      --bg3: #1a2533;
+      --border: #1e2a36;
+      --text: #e6eef8;
+      --text2: #9aa9b9;
+      --accent: #e50914;
+      --accent2: #ffd700;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.6rem; margin-top: 3rem; margin-bottom: 1rem; color: var(--accent); border-bottom: 2px solid var(--border); padding-bottom: 0.4rem; }
+    h3 { font-size: 1.2rem; margin-top: 2rem; margin-bottom: 0.6rem; color: #fff; }
+    p, li { color: var(--text2); }
+    a { color: var(--accent); }
+    .badge {
+      display: inline-block;
+      background: var(--bg3);
+      color: var(--text);
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      margin: 0.15rem;
+    }
+    .badge-accent { background: var(--accent); color: #fff; }
+    .badge-yellow { background: var(--accent2); color: #000; }
+    pre, code {
+      font-family: 'JetBrains Mono', 'Consolas', monospace;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+    code { padding: 0.15rem 0.4rem; font-size: 0.85rem; }
+    pre {
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+    pre code { background: none; border: none; padding: 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid var(--border);
+    }
+    th { background: var(--bg2); color: #fff; font-weight: 600; }
+    td { color: var(--text2); }
+    .diagram-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      white-space: pre;
+      overflow-x: auto;
+    }
+    .subtitle { color: var(--text2); font-size: 1.05rem; margin-bottom: 2rem; }
+    ul, ol { padding-left: 1.5rem; }
+    li { margin-bottom: 0.3rem; }
+    .screenshot-placeholder {
+      background: var(--bg2);
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 2.5rem;
+      text-align: center;
+      color: var(--text2);
+      margin: 1rem 0;
+    }
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      border-top: 1px solid var(--border);
+      margin-top: 3rem;
+      color: var(--text2);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- TÍTULO -->
+  <h1>🎬 Max.tv</h1>
+  <p class="subtitle">
+    Plataforma web de streaming de películas y series — Documentación del proyecto
+  </p>
+  <p>
+    <span class="badge badge-accent">React</span>
+    <span class="badge badge-accent">Vite</span>
+    <span class="badge badge-accent">Tailwind CSS</span>
+    <span class="badge badge-accent">Node.js</span>
+    <span class="badge badge-accent">Express</span>
+    <span class="badge badge-accent">Prisma ORM</span>
+    <span class="badge badge-accent">PostgreSQL</span>
+    <span class="badge badge-yellow">TMDb API</span>
+  </p>
+
+  <!-- 1. DESCRIPCIÓN GENERAL -->
+  <h2>1. Descripción General</h2>
+  <p>
+    Max.tv es una aplicación web que permite explorar películas y series en tendencia,
+    buscar contenido, guardar favoritos y ver tráilers. Consume la API de
+    <strong>The Movie Database (TMDb)</strong> para obtener contenido real y utiliza
+    un backend propio para la gestión de usuarios y favoritos.
+  </p>
+  <p>
+    <strong>Objetivo académico:</strong> El proyecto demuestra el uso de tecnologías
+    web modernas: frontend React con Vite, backend Node.js/Express, base de datos
+    PostgreSQL (Neon), autenticación JWT y consumo de APIs externas.
+  </p>
+
+  <!-- 2. ARQUITECTURA -->
+  <h2>2. Arquitectura del Sistema</h2>
+  <p>El proyecto sigue una arquitectura <strong>cliente-servidor</strong> con dos componentes principales:</p>
+  <ul>
+    <li><strong>Frontend (React + Vite):</strong> Interfaz de usuario, alojado en Netlify.</li>
+    <li><strong>Backend (Node.js + Express):</strong> API REST, alojado en Render/Railway.</li>
+    <li><strong>Base de datos (PostgreSQL):</strong> Almacenamiento en Neon.</li>
+    <li><strong>API externa TMDb:</strong> Fuente de datos de películas y series.</li>
+  </ul>
+
+  <div class="diagram-box">
++-------------------+        HTTPS        +-------------------+
+|                   |  ──────────────────► |                   |
+|   Netlify         |                      |   Render/Railway  |
+|   (Frontend)      |  ◄────────────────── |   (Backend)       |
+|   React + Vite    |       JSON/API       |   Express + Node  |
+|                   |                      |                   |
++---------+---------+                      +--------+----------+
+          |                                          |
+          |                                          | POSTGRESQL
+          |                                          ▼
+          |                                   +---------------+
+          |                                   |   Neon DB     |
+          |                                   |  (PostgreSQL) |
+          |                                   +---------------+
+          |
+          |                           +-------------------+
+          +--------------------------► |   TMDb API       |
+              (proxy vía backend)      |   (themoviedb)   |
+                                       +-------------------+
+  </div>
+
+  <!-- 3. CASOS DE USO -->
+  <h2>3. Casos de Uso</h2>
+
+  <h3>3.1 Explorar contenido en tendencia</h3>
+  <p><strong>Actores:</strong> Usuario (autenticado o no)</p>
+  <p><strong>Flujo:</strong></p>
+  <ol>
+    <li>El usuario ingresa a la página principal (/).</li>
+    <li>El frontend solicita <code>GET /api/tmdb/trending</code> al backend.</li>
+    <li>El backend consulta TMDb y devuelve las tendencias de la semana.</li>
+    <li>Se muestran en el Hero (banner principal) y en el carrusel "Tendencias".</li>
+    <li>El usuario puede navegar los carruseles con los botones izquierda/derecha.</li>
+  </ol>
+
+  <h3>3.2 Buscar películas y series</h3>
+  <p><strong>Actores:</strong> Usuario (autenticado o no)</p>
+  <p><strong>Flujo:</strong></p>
+  <ol>
+    <li>El usuario escribe en la barra de búsqueda del Header.</li>
+    <li>Con debounce de 300ms, se consulta <code>GET /api/tmdb/search?q=...</code>.</li>
+    <li>Aparece un dropdown con hasta 8 sugerencias.</li>
+    <li>Al hacer clic en una sugerencia o presionar Enter, navega a <code>/search?q=...</code>.</li>
+    <li>La página SearchResults muestra todos los resultados en grilla.</li>
+    <li>El usuario puede cambiar entre español e inglés.</li>
+  </ol>
+
+  <h3>3.3 Registrarse e iniciar sesión</h3>
+  <p><strong>Actores:</strong> Usuario no autenticado</p>
+  <p><strong>Flujo:</strong></p>
+  <ol>
+    <li>El usuario navega a /auth.</li>
+    <li>Selecciona "Crear cuenta" o "Iniciar sesión".</li>
+    <li>Completa email y contraseña y envía el formulario.</li>
+    <li>El backend valida las credenciales contra PostgreSQL (Neon).</li>
+    <li>Si es exitoso, recibe un token JWT que se guarda en localStorage.</li>
+    <li>El usuario es redirigido al home con sesión iniciada.</li>
+  </ol>
+
+  <h3>3.4 Guardar y gestionar favoritos</h3>
+  <p><strong>Actores:</strong> Usuario autenticado</p>
+  <p><strong>Flujo:</strong></p>
+  <ol>
+    <li>El usuario pasa el mouse sobre un póster y hace clic en "Favoritos".</li>
+    <li>Se envía <code>POST /api/favorites</code> con el token JWT.</li>
+    <li>El item se guarda en la base de datos asociado al usuario.</li>
+    <li>En la página /favorites, el usuario ve todos sus favoritos.</li>
+    <li>Puede filtrar por tipo (película/serie) y buscar localmente.</li>
+    <li>Puede eliminar favoritos haciendo clic en el botón nuevamente.</li>
+  </ol>
+
+  <h3>3.5 Ver detalle y tráiler</h3>
+  <p><strong>Actores:</strong> Usuario (autenticado o no)</p>
+  <p><strong>Flujo:</strong></p>
+  <ol>
+    <li>El usuario hace clic en un póster (desde carrusel, favoritos o búsqueda).</li>
+    <li>Se abre un modal lateral con la información detallada.</li>
+    <li>El modal carga datos adicionales del backend (<code>GET /api/tmdb/movie/:id</code>).</li>
+    <li>Si hay tráiler disponible, se muestra un reproductor de YouTube.</li>
+    <li>El modal se cierra al hacer clic fuera, en la X, o presionar Escape.</li>
+  </ol>
+
+  <!-- 4. TECNOLOGÍAS -->
+  <h2>4. Stack Tecnológico</h2>
+  <table>
+    <tr><th>Categoría</th><th>Tecnología</th><th>Uso</th></tr>
+    <tr><td>Frontend</td><td>React 18</td><td>Biblioteca para construir la interfaz de usuario</td></tr>
+    <tr><td>Frontend</td><td>Vite 5</td><td>Empaquetador y servidor de desarrollo rápido</td></tr>
+    <tr><td>Frontend</td><td>React Router 6</td><td>Enrutamiento del lado del cliente (SPA)</td></tr>
+    <tr><td>Frontend</td><td>Tailwind CSS 3</td><td>Framework CSS utility-first para estilos</td></tr>
+    <tr><td>Frontend</td><td>Framer Motion</td><td>Animaciones y transiciones</td></tr>
+    <tr><td>Frontend</td><td>Axioms</td><td>Cliente HTTP para peticiones al backend</td></tr>
+    <tr><td>Backend</td><td>Node.js</td><td>Entorno de ejecución JavaScript</td></tr>
+    <tr><td>Backend</td><td>Express</td><td>Framework web para construir la API REST</td></tr>
+    <tr><td>Backend</td><td>Prisma ORM</td><td>Mapeo objeto-relacional para la base de datos</td></tr>
+    <tr><td>Backend</td><td>JWT (jsonwebtoken)</td><td>Autenticación basada en tokens</td></tr>
+    <tr><td>Backend</td><td>bcrypt</td><td>Hash de contraseñas</td></tr>
+    <tr><td>Backend</td><td>NodeCache</td><td>Caché en memoria para respuestas de TMDb</td></tr>
+    <tr><td>Base de datos</td><td>PostgreSQL (Neon)</td><td>Base de datos relacional en la nube</td></tr>
+    <tr><td>API externa</td><td>TMDb API</td><td>Datos de películas, series, imágenes y tráilers</td></tr>
+    <tr><td>Hosting</td><td>Netlify</td><td>Hosting del frontend (estático)</td></tr>
+    <tr><td>Hosting</td><td>Render / Railway</td><td>Hosting del backend (Node.js)</td></tr>
+  </table>
+
+  <!-- 5. ENDPOINTS DE LA API -->
+  <h2>5. Endpoints de la API</h2>
+  <table>
+    <tr><th>Método</th><th>Ruta</th><th>Autenticación</th><th>Descripción</th></tr>
+    <tr><td>POST</td><td>/api/auth/register</td><td>No</td><td>Registrar nuevo usuario</td></tr>
+    <tr><td>POST</td><td>/api/auth/login</td><td>No</td><td>Iniciar sesión</td></tr>
+    <tr><td>GET</td><td>/api/auth/me</td><td>Sí (JWT)</td><td>Verificar sesión actual</td></tr>
+    <tr><td>GET</td><td>/api/favorites</td><td>Sí (JWT)</td><td>Listar favoritos del usuario</td></tr>
+    <tr><td>POST</td><td>/api/favorites</td><td>Sí (JWT)</td><td>Guardar un favorito</td></tr>
+    <tr><td>DELETE</td><td>/api/favorites/:id</td><td>Sí (JWT)</td><td>Eliminar un favorito</td></tr>
+    <tr><td>GET</td><td>/api/tmdb/trending</td><td>No</td><td>Tendencias semanales</td></tr>
+    <tr><td>GET</td><td>/api/tmdb/search</td><td>No</td><td>Buscar contenido (query: q)</td></tr>
+    <tr><td>GET</td><td>/api/tmdb/movie/:id</td><td>No</td><td>Detalles de película</td></tr>
+    <tr><td>GET</td><td>/api/tmdb/tv/:id</td><td>No</td><td>Detalles de serie</td></tr>
+    <tr><td>GET</td><td>/api/tmdb/genre/:genreId</td><td>No</td><td>Descubrir por género</td></tr>
+    <tr><td>GET</td><td>/api/demo/movies</td><td>No</td><td>Datos demo (fallback)</td></tr>
+    <tr><td>GET</td><td>/health</td><td>No</td><td>Health check del servidor</td></tr>
+  </table>
+
+  <!-- 6. ESQUEMA DE BASE DE DATOS -->
+  <h2>6. Esquema de Base de Datos</h2>
+  <p>Prisma ORM genera las tablas automáticamente. El esquema se define en <code>backend/prisma/schema.prisma</code>:</p>
+
+  <div class="diagram-box">
+┌─────────────────────┐        ┌──────────────────────────┐
+│       User          │        │        Favorite          │
+├─────────────────────┤        ├──────────────────────────┤
+│ id: Int (PK)        │◄───────│ id: Int (PK)             │
+│ email: String (UQ)  │  1:N   │ userId: Int (FK)         │
+│ password: String    │        │ tmdbId: Int              │
+│ createdAt: DateTime │        │ mediaType: String        │
+└─────────────────────┘        │ title: String            │
+                               │ poster: String?          │
+                               │ createdAt: DateTime      │
+                               └──────────────────────────┘
+  </div>
+  <p>Un <strong>usuario</strong> puede tener muchos <strong>favoritos</strong>. Cada favorito guarda la referencia al contenido de TMDb (tmdbId) junto con metadatos para mostrar sin necesidad de llamar a la API.</p>
+
+  <!-- 7. INSTRUCCIONES DE INSTALACIÓN -->
+  <h2>7. Instrucciones de Instalación</h2>
+
+  <h3>7.1 Requisitos previos</h3>
+  <ul>
+    <li>Node.js 16+</li>
+    <li>npm o yarn</li>
+    <li>Una API key de TMDb (gratis en <a href="https://www.themoviedb.org/settings/api" target="_blank">themoviedb.org</a>)</li>
+    <li>Opcional: Base de datos PostgreSQL (Neon o local)</li>
+  </ul>
+
+  <h3>7.2 Backend</h3>
+  <pre><code># 1. Clonar el repositorio
+git clone https://github.com/Maxmoaber/max-tv.git
+cd max-tv/backend
+
+# 2. Instalar dependencias
+npm install
+
+# 3. Configurar variables de entorno
+cp .env.example .env
+# Editar .env con tus valores (TMDB_API_KEY, DATABASE_URL, JWT_SECRET)
+
+# 4. Generar cliente Prisma y sincronizar base de datos
+npx prisma generate
+npx prisma db push
+
+# 5. Iniciar servidor (desarrollo)
+npm run dev
+
+# El backend estará disponible en http://localhost:4001
+  </code></pre>
+
+  <h3>7.3 Frontend</h3>
+  <pre><code># 1. Ir al directorio del frontend
+cd max-tv/frontend
+
+# 2. Instalar dependencias
+npm install
+
+# 3. Configurar variables de entorno
+cp .env.example .env
+# Editar VITE_BACKEND_URL para apuntar al backend
+# (local: http://localhost:4001, producción: URL del backend)
+
+# 4. Iniciar servidor de desarrollo
+npm run dev
+
+# El frontend estará disponible en http://localhost:5173
+  </code></pre>
+
+  <!-- 8. VARIABLES DE ENTORNO -->
+  <h2>8. Variables de Entorno</h2>
+
+  <h3>Backend (<code>backend/.env</code>)</h3>
+  <table>
+    <tr><th>Variable</th><th>Descripción</th><th>Ejemplo</th></tr>
+    <tr><td>PORT</td><td>Puerto del servidor</td><td>4001</td></tr>
+    <tr><td>DATABASE_URL</td><td>Conexión a PostgreSQL (Neon)</td><td>postgresql://user:pass@host/db?sslmode=require</td></tr>
+    <tr><td>JWT_SECRET</td><td>Secreto para firmar tokens JWT</td><td>mi_secreto_2024</td></tr>
+    <tr><td>TMDB_API_KEY</td><td>API key de TMDb</td><td>d739d63b62deb1d39bc35e39ac00f1ba</td></tr>
+  </table>
+
+  <h3>Frontend (<code>frontend/.env</code>)</h3>
+  <table>
+    <tr><th>Variable</th><th>Descripción</th><th>Ejemplo</th></tr>
+    <tr><td>VITE_BACKEND_URL</td><td>URL del backend</td><td>http://localhost:4001</td></tr>
+    <tr><td>VITE_TMDB_API_KEY</td><td>API key de TMDb (no se usa actualmente)</td><td>your_key_here</td></tr>
+  </table>
+
+  <!-- 9. DESPLIEGUE -->
+  <h2>9. Despliegue</h2>
+
+  <h3>9.1 Frontend (Netlify)</h3>
+  <ol>
+    <li>Conecta el repositorio de GitHub en <a href="https://app.netlify.com" target="_blank">Netlify</a>.</li>
+    <li>Configura el build:
+      <ul>
+        <li>Base directory: <code>frontend</code></li>
+        <li>Build command: <code>npm run build</code></li>
+        <li>Publish directory: <code>dist</code></li>
+      </ul>
+    </li>
+    <li>Agrega la variable de entorno <code>VITE_BACKEND_URL</code> con la URL del backend en producción.</li>
+    <li>Netlify deploya automáticamente al hacer push a la rama configurada.</li>
+  </ol>
+
+  <h3>9.2 Backend (Render / Railway)</h3>
+  <ol>
+    <li>Conecta el repositorio en Render o Railway.</li>
+    <li>Configura:
+      <ul>
+        <li>Root directory: <code>backend</code></li>
+        <li>Build command: <code>npm install && npx prisma generate && npx prisma db push</code></li>
+        <li>Start command: <code>node src/server.js</code></li>
+      </ul>
+    </li>
+    <li>Agrega las variables de entorno: <code>DATABASE_URL</code>, <code>JWT_SECRET</code>, <code>TMDB_API_KEY</code>.</li>
+  </ol>
+
+  <!-- 10. ESTRUCTURA DEL PROYECTO -->
+  <h2>10. Estructura del Proyecto</h2>
+  <div class="diagram-box">
+max-tv/
+├── backend/                    # Servidor Node.js + Express
+│   ├── prisma/
+│   │   └── schema.prisma       # Esquema de base de datos
+│   └── src/
+│       ├── server.js           # Punto de entrada (Express, rutas, JWT)
+│       └── services/
+│           └── tmdb.js         # Integración con TMDb API
+│
+├── frontend/                   # Cliente React + Vite
+│   ├── index.html              # HTML principal
+│   └── src/
+│       ├── main.jsx            # Punto de entrada React
+│       ├── App.jsx             # Componente raíz (rutas)
+│       ├── styles.css          # Estilos globales + Tailwind
+│       ├── components/         # Componentes reutilizables
+│       │   ├── Header.jsx      # Barra de navegación + búsqueda
+│       │   ├── Footer.jsx      # Pie de página
+│       │   ├── Carousel.jsx    # Carrusel horizontal
+│       │   ├── PosterCard.jsx  # Tarjeta de póster interactiva
+│       │   ├── ModalDetail.jsx # Modal de detalle lateral
+│       │   └── Skeleton.jsx    # Placeholders de carga
+│       ├── context/            # Contextos de React (estado global)
+│       │   ├── AuthContext.jsx # Autenticación (JWT)
+│       │   └── ToastContext.jsx# Notificaciones (toasts)
+│       ├── pages/              # Páginas de la aplicación
+│       │   ├── Home.jsx        # Página principal
+│       │   ├── Auth.jsx        # Login / Registro
+│       │   ├── Favorites.jsx   # Favoritos del usuario
+│       │   ├── SearchResults.jsx # Resultados de búsqueda
+│       │   └── NotFound.jsx    # Página 404
+│       └── utils/              # Utilidades
+│           ├── api.js          # Axios + URL del backend
+│           ├── demoData.js     # Datos demo (fallback)
+│           └── genres.js       # Mapa de IDs de género
+│
+├── netlify.toml                # Configuración de Netlify
+└── README.md
+  </div>
+
+  <!-- 11. POSIBLES MEJORAS -->
+  <h2>11. Posibles Mejoras Futuras</h2>
+  <ul>
+    <li><strong>Reproductor de video integrado:</strong> Reproducir películas/series completas dentro de la plataforma.</li>
+    <li><strong>Sistema de recomendaciones:</strong> Sugerir contenido basado en favoritos e historial.</li>
+    <li><strong>Perfiles de usuario:</strong> Múltiples perfiles por cuenta (estilo Netflix).</li>
+    <li><strong>Modo offline:</strong> Almacenar contenido en caché para ver sin conexión.</li>
+    <li><strong>Valoraciones y reseñas:</strong> Permitir a los usuarios calificar y comentar.</li>
+    <li><strong>Internacionalización completa:</strong> Soporte para más idiomas.</li>
+    <li><strong>Tests automatizados:</strong> Pruebas unitarias y de integración (Jest, Cypress).</li>
+    <li><strong>Modo oscuro/claro:</strong> Alternar entre temas.</li>
+  </ul>
+
+  <footer>
+    Max.tv — Proyecto desarrollado por Emiliano González &amp; Roque Manuel<br>
+    <a href="https://github.com/Maxmoaber/max-tv" target="_blank">GitHub</a>
+  </footer>
+
+</div>
+</body>
+</html>

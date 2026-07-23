@@ -1,47 +1,46 @@
-Proyecto Visual de Películas y Series
+# 🎬 Max.tv — Plataforma de Streaming
 
-Resumen
-Este repositorio contiene un esqueleto para una aplicación visual de películas y series. Tiene dos carpetas principales:
+Aplicación web para explorar películas y series en tendencia, buscar contenido, guardar favoritos y ver tráilers. Consume la API de **TMDb** para obtener contenido real.
 
-- backend: API en Node.js + Express con autenticación (JWT) y endpoints para favoritos.
-- frontend: aplicación React (Vite) que consume TMDb para mostrar carruseles, hero y fichas visuales.
+## Stack
 
-Objetivo
-- Interfaz visual centrada en banners y carruseles.
-- Login / registro de usuarios.
-- Guardado de favoritos por usuario.
+| Frontend | Backend | Base de datos | Hosting |
+|---|---|---|---|
+| React 18 | Node.js + Express | PostgreSQL (Neon) | Netlify + Render |
+| Vite 5 | Prisma ORM | | |
+| Tailwind CSS 3 | JWT + bcrypt | | |
 
-Requisitos
-- Node.js >= 16
-- npm o yarn
+## Documentación completa
 
-Pasos para ejecutar en desarrollo
+👉 **[docs/index.html](docs/index.html)** — Abrir en el navegador para ver:
+- Arquitectura del sistema
+- Casos de uso (explorar, buscar, registrarse, favoritos, detalle)
+- Instalación paso a paso
+- Endpoints de la API
+- Esquema de base de datos
+- Variables de entorno
+- Despliegue en Netlify + Render
+- Estructura del proyecto
 
-1) Obtener TMDb API Key
-   - Regístrate en https://www.themoviedb.org y crea una API key.
+## Inicio rápido
 
-2) Backend
-   - cd backend
-   - cp .env.example .env  (o crea .env con las variables)
-   - npm install
-   - npx prisma generate
-   - npx prisma migrate dev --name init
-   - npm run dev
+```bash
+# Backend
+cd backend
+cp .env.example .env    # Configurar TMDB_API_KEY y DATABASE_URL
+npm install
+npx prisma generate
+npx prisma db push
+npm run dev
 
-   Por defecto el backend escucha en http://localhost:4000
+# Frontend (otra terminal)
+cd frontend
+cp .env.example .env    # Configurar VITE_BACKEND_URL
+npm install
+npm run dev
+```
 
-3) Frontend
-   - cd frontend
-   - cp .env.example .env  (añade VITE_TMDB_API_KEY, VITE_BACKEND_URL si hace falta)
-   - npm install
-   - npm run dev
+## Enlaces
 
-   Por defecto Vite te dirá el puerto local (p.ej. http://localhost:5173)
-
-Demo
 - Frontend (Netlify): https://spiffy-mousse-e419c1.netlify.app/
-
-Notas
-- El backend usa SQLite por defecto para desarrollo (DATABASE_URL en .env).
-- Para producción cambia a Postgres y configura las variables.
-- Asegúrate de guardar JWT_SECRET y TMDB_API_KEY en .env locales.
+- Documentación: [docs/index.html](docs/index.html)

@@ -1,3 +1,25 @@
+# ====================================================================
+#  netlify.toml — Configuración de despliegue en Netlify
+# ====================================================================
+#
+#  Netlify es un servicio de hosting para frontends estáticos.
+#  Este archivo le dice a Netlify cómo construir y servir la app.
+#
+#  [build]
+#    base:    El directorio donde está el proyecto a construir
+#    command: Comando para construir la app (genera la carpeta dist/)
+#    publish: Carpeta que Netlify debe servir como sitio web
+#
+#  [[redirects]]
+#    Netlify no sabe manejar rutas de React Router por defecto.
+#    Esta regla redirige TODAS las rutas a /index.html para que
+#    React Router pueda manejarlas correctamente.
+#
+#  Ejemplo: /search?q=avatar → sirve /index.html
+#           React Router ve la URL y renderiza SearchResults
+#
+# ====================================================================
+
 [build]
   base = "frontend"
   command = "npm run build"

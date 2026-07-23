@@ -1,3 +1,31 @@
+/*
+ * ====================================================================
+ *  ModalDetail.jsx — Modal lateral de detalle de contenido
+ * ====================================================================
+ *
+ *  Se abre al hacer click en un póster (desde Home, Favoritos, etc.)
+ *  y muestra información detallada de la película o serie.
+ *
+ *  Contenido:
+ *    - Imagen de fondo (backdrop)
+ *    - Póster y título
+ *    - Tipo (película/serie) y puntuación
+ *    - Descripción (overview)
+ *    - Tráiler de YouTube (si está disponible)
+ *
+ *  Comportamiento:
+ *    - Se abre desde la derecha con animación (framer-motion spring)
+ *    - Se cierra al hacer click fuera, presionar Escape, o en la X
+ *    - Carga detalles completos desde el backend al abrirse
+ *
+ *  Props:
+ *    - item: Objeto con datos básicos (id, mediaType, etc.)
+ *    - onClose: Función para cerrar el modal
+ *    - language: Código de idioma para los detalles
+ *
+ *  Tecnologías: React, framer-motion, Tailwind CSS
+ */
+
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { api, BACKEND } from '../utils/api'
@@ -5,12 +33,14 @@ import { api, BACKEND } from '../utils/api'
 export default function ModalDetail({ item, onClose, language = 'es-ES' }){
   const [details, setDetails] = useState(item)
 
+  // Cerrar con tecla Escape
   useEffect(()=>{
     function onKey(e){ if(e.key==='Escape') onClose() }
     window.addEventListener('keydown', onKey)
     return ()=> window.removeEventListener('keydown', onKey)
   },[])
 
+  // Cargar detalles completos desde el backend
   useEffect(()=>{
     let mounted = true
     async function load(){
@@ -46,6 +76,7 @@ export default function ModalDetail({ item, onClose, language = 'es-ES' }){
             role="dialog"
             aria-modal="true"
           >
+            {/* Cabecera sticky */}
             <div className="sticky top-0 z-10 flex items-center justify-between p-4 bg-[#0f1923]/90 backdrop-blur-sm border-b border-[#1e2a36]">
               <h2 className="text-lg font-bold text-white truncate">{details.title}</h2>
               <button onClick={onClose} className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#e50914] flex items-center justify-center transition-colors flex-shrink-0">
@@ -54,6 +85,7 @@ export default function ModalDetail({ item, onClose, language = 'es-ES' }){
             </div>
 
             <div className="relative">
+              {/* Imagen de fondo */}
               {details.backdrop && (
                 <div className="relative h-56 md:h-72 overflow-hidden">
                   <img src={details.backdrop} alt="" className="w-full h-full object-cover" />
@@ -83,6 +115,7 @@ export default function ModalDetail({ item, onClose, language = 'es-ES' }){
                   </div>
                 </div>
 
+                {/* Tráiler de YouTube */}
                 {details.trailerKey && (
                   <div className="mt-4 rounded-xl overflow-hidden ring-1 ring-white/10">
                     <div style={{position:'relative',paddingTop:'56.25%'}}>

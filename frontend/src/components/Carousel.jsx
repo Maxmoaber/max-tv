@@ -1,12 +1,40 @@
+/*
+ * ====================================================================
+ *  Carousel.jsx — Carrusel horizontal de contenido
+ * ====================================================================
+ *
+ *  Componente reutilizable que muestra una fila de tarjetas (PosterCard)
+ *  con desplazamiento horizontal. Se usa en Home para:
+ *    - Tendencias
+ *    - Contenido por género (Comedia, Animación, Acción, etc.)
+ *
+ *  Funcionalidad:
+ *    - Scroll horizontal con botones de navegación (izquierda/derecha)
+ *    - Animaciones de entrada con framer-motion (stagger)
+ *    - Botón "Ver todo" para cargar más items
+ *    - Ocultamiento automático de scrollbar nativa
+ *
+ *  Props:
+ *    - title: Título de la sección
+ *    - items: Array de items a mostrar
+ *    - onPosterClick: Callback al hacer click en un poster
+ *    - onViewMore: Callback para cargar más items
+ *    - loadingMore: Booleano para estado de carga
+ *
+ *  Tecnologías: React, framer-motion, Tailwind CSS
+ */
+
 import React, { useRef } from 'react'
 import { motion } from 'framer-motion'
 import PosterCard from './PosterCard'
 
+// Variantes de animación para el contenedor (stagger children)
 const container = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.06 } }
 }
 
+// Variantes de animación para cada item
 const child = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } }
@@ -15,6 +43,7 @@ const child = {
 export default function Carousel({ title, items, onPosterClick, onViewMore, loadingMore }){
   const scrollRef = useRef(null)
 
+  // Scroll suave en la dirección indicada (70% del ancho visible)
   const scroll = (dir) => {
     if (!scrollRef.current) return
     const amount = scrollRef.current.clientWidth * 0.7
@@ -23,6 +52,7 @@ export default function Carousel({ title, items, onPosterClick, onViewMore, load
 
   return (
     <section className="mb-12">
+      {/* Encabezado con título y botón "Ver todo" */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-white text-xl font-bold">{title}</h2>
         {onViewMore && (
@@ -42,6 +72,7 @@ export default function Carousel({ title, items, onPosterClick, onViewMore, load
           </button>
         )}
       </div>
+      {/* Carrusel con botones de navegación */}
       <div className="relative group">
         <button onClick={()=>scroll('left')} className="absolute left-0 top-0 bottom-0 z-10 w-10 md:w-12 bg-gradient-to-r from-[#0a0e14] to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-start pl-1">
           <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/></svg>

@@ -1,3 +1,23 @@
+/*
+ * ====================================================================
+ *  SearchResults.jsx — Página de resultados de búsqueda
+ * ====================================================================
+ *
+ *  Esta página se muestra cuando el usuario navega a /search?q=...
+ *  (desde la barra de búsqueda del Header).
+ *
+ *  Funcionalidad:
+ *    1. Lee el parámetro 'q' de la URL usando useSearchParams()
+ *    2. Si hay idioma especificado (?lang=), lo usa; si no, español
+ *    3. Llama a /api/tmdb/search?q=... con debounce de 300ms
+ *    4. Muestra resultados en grilla con pósters, título, puntuación
+ *    5. Botón para cambiar idioma (es-ES / en-US)
+ *
+ *  Diferencias con la búsqueda del Header:
+ *    - Header: búsqueda inline con dropdown de sugerencias (máx 8)
+ *    - SearchResults: página completa con todos los resultados
+ */
+
 import React, { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { api, BACKEND } from '../utils/api'
@@ -10,6 +30,7 @@ export default function SearchResults() {
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
 
+  // Búsqueda con debounce de 300ms para evitar llamadas innecesarias
   useEffect(() => {
     if (!q) { setResults([]); return }
     setLoading(true)
@@ -53,6 +74,7 @@ export default function SearchResults() {
           {results.length > 0 && `${results.length} resultados encontrados`}
         </p>
 
+        {/* Skeleton de carga */}
         {loading && (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {Array.from({ length: 10 }).map((_, i) => (
@@ -67,6 +89,7 @@ export default function SearchResults() {
           </div>
         )}
 
+        {/* Sin resultados */}
         {!loading && results.length === 0 && q && (
           <div className="text-center py-20 text-gray-400">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#1a2533] flex items-center justify-center">
@@ -78,6 +101,7 @@ export default function SearchResults() {
           </div>
         )}
 
+        {/* Grilla de resultados */}
         {!loading && results.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {results.map(item => (

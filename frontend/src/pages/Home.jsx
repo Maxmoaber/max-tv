@@ -1,3 +1,30 @@
+/*
+ * ====================================================================
+ *  Home.jsx — Página principal de Max.tv
+ * ====================================================================
+ *
+ *  Esta es la página que ve el usuario al entrar a la aplicación.
+ *  Su estructura es:
+ *
+ *    1. <Header />        → Barra de navegación con buscador
+ *    2. <Hero />          → Banner principal con la película destacada
+ *    3. <Carousel />      → Carruseles de contenido (tendencias, géneros)
+ *    4. <Footer />        → Pie de página
+ *    5. <ModalDetail />   → Modal de detalle (al hacer click en un item)
+ *
+ *  Flujo de carga:
+ *    1. Al montarse, llama a /api/tmdb/trending para obtener tendencias.
+ *    2. Por cada género definido (Comedia, Animación, Acción, etc.),
+ *       llama a /api/tmdb/genre/:id para obtener contenido de ese género.
+ *    3. Si alguna llamada falla, usa datos de demoData.js como fallback.
+ *    4. El usuario puede cambiar el idioma (es-ES / en-US) con un botón.
+ *
+ *  El Hero:
+ *    - Muestra la primera película/serie de las tendencias
+ *    - Reproduce el tráiler de YouTube si está disponible
+ *    - Tiene navegación entre los primeros 4 items destacados
+ */
+
 import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -7,6 +34,10 @@ import { SkeletonCarousel, SkeletonHero } from '../components/Skeleton'
 import { getDemoTrending, getDemoGenre } from '../utils/demoData'
 import { api, BACKEND } from '../utils/api'
 
+/**
+ * Hero: Componente interno que muestra el banner principal con la
+ * película/serie destacada, su tráiler de fondo y navegación.
+ */
 function Hero({ items, onMoreInfo }){
   const [idx, setIdx] = useState(0)
   const [trailerKey, setTrailerKey] = useState(null)
@@ -17,6 +48,7 @@ function Hero({ items, onMoreInfo }){
   const prev = ()=> setIdx(i => (i-1+items.length) % items.length)
   const bg = item.backdrop || item.poster
 
+  // Cargar el tráiler del item destacado
   useEffect(() => {
     let mounted = true
     setTrailerKey(null)
@@ -34,6 +66,7 @@ function Hero({ items, onMoreInfo }){
 
   return (
     <div className="hero relative overflow-hidden">
+      {/* Tráiler o imagen de fondo */}
       {trailerKey ? (
         <div className="absolute inset-0 z-0 pointer-events-none">
           <iframe
@@ -47,8 +80,10 @@ function Hero({ items, onMoreInfo }){
       ) : (
         <div className="absolute inset-0 z-0" style={{ backgroundImage: `url(${bg})`, backgroundSize: 'cover', backgroundPosition: 'center top' }} />
       )}
+      {/* Gradiente oscuro superpuesto para legibilidad */}
       <div className="absolute inset-0 z-[1]" style={{ background: 'linear-gradient(180deg, rgba(10,14,20,0.2) 0%, rgba(10,14,20,0.7) 60%, #0a0e14 100%)' }} />
       <div className="hero-inner z-[2] relative">
+        {/* Indicadores de página */}
         <div className="flex items-center gap-2 mb-2">
           {items.slice(0,4).map((_,i)=>(
             <button key={i} onClick={()=>setIdx(i)} className={`h-1 rounded-full transition-all duration-300 ${i===idx ? 'w-8 bg-[#e50914]' : 'w-4 bg-white/40 hover:bg-white/60'}`} />
@@ -126,6 +161,7 @@ export default function Home(){
     setLoading(true)
   }
 
+  // Cargar tendencias y contenido por género al montar o cambiar idioma
   useEffect(()=>{
     async function load(){
       const base = BACKEND.replace(/\/$/,'')
@@ -134,6 +170,7 @@ export default function Home(){
         setTrending(t.data.slice(0,20))
         setHeroItems(t.data.slice(0,4))
       }catch(e){
+        // Si falla TMDb, usar datos demo
         try {
           const r = await api.get(`${base}/api/demo/movies`)
           const items = r.data || []
@@ -145,6 +182,7 @@ export default function Home(){
           setHeroItems(items.slice(0,4))
         }
       }
+      // Cargar contenido para cada género
       const results = await Promise.allSettled(
         GENRES.map(g => api.get(`${base}/api/tmdb/genre/${g.id}?language=${language}`))
       )
@@ -162,6 +200,7 @@ export default function Home(){
     load()
   },[language])
 
+  // Ver más: carga más items de un género
   const handleViewMore = async (genre) => {
     setLoadingMore(genre.id)
     const current = genreLimit[genre.id] || 12

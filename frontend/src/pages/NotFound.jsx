@@ -1,3 +1,16 @@
+/*
+ * ====================================================================
+ *  NotFound.jsx — Página 404 (ruta no encontrada)
+ * ====================================================================
+ *
+ *  Se muestra cuando el usuario navega a una URL que no coincide
+ *  con ninguna ruta definida. React Router usa la ruta "path="*""
+ *  para capturar todas las rutas no definidas.
+ *
+ *  Muestra un diseño simple con el número 404 grande y un enlace
+ *  para volver al inicio.
+ */
+
 import React from 'react'
 import { Link } from 'react-router-dom'
 

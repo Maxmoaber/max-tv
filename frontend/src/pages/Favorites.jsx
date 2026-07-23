@@ -1,3 +1,22 @@
+/*
+ * ====================================================================
+ *  Favorites.jsx — Página de favoritos del usuario
+ * ====================================================================
+ *
+ *  Muestra todas las películas y series que el usuario ha guardado
+ *  como favoritos. Requiere autenticación: si el usuario no tiene
+ *  un token JWT, redirige automáticamente a /auth.
+ *
+ *  Funcionalidades:
+ *    - Carga los favoritos desde GET /api/favorites (con token JWT)
+ *    - Filtro por tipo: Todos / Películas / Series
+ *    - Búsqueda local dentro de los favoritos
+ *    - Cada item se puede clickear para ver el detalle (ModalDetail)
+ *    - Estado vacío con CTA para explorar contenido
+ *
+ *  Tecnología: React, React Router, Axios
+ */
+
 import React, { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
@@ -17,6 +36,7 @@ export default function Favorites(){
   const [searchQuery, setSearchQuery] = useState('')
   const [filterType, setFilterType] = useState('all')
 
+  // Cargar favoritos al montar el componente
   useEffect(()=>{
     if(!token) { navigate('/auth'); return }
     async function load(){
@@ -36,6 +56,7 @@ export default function Favorites(){
     load()
   }, [token])
 
+  // Filtrado local (sin llamada al backend)
   const filtered = items.filter(i => {
     if (filterType !== 'all' && i.mediaType !== filterType) return false
     if (searchQuery && !i.title.toLowerCase().includes(searchQuery.toLowerCase())) return false
@@ -59,6 +80,7 @@ export default function Favorites(){
           </Link>
         </div>
 
+        {/* Barra de búsqueda y filtro por tipo */}
         {!loading && items.length > 0 && (
           <div className="flex flex-col sm:flex-row gap-3 mb-6">
             <div className="relative flex-1 max-w-sm">
@@ -95,6 +117,7 @@ export default function Favorites(){
         {loading ? (
           <SkeletonGrid count={8} />
         ) : items.length === 0 ? (
+          /* Estado vacío: no hay favoritos guardados */
           <div className="text-center py-20">
             <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[#121a24] flex items-center justify-center">
               <svg className="w-10 h-10 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
@@ -106,6 +129,7 @@ export default function Favorites(){
             </Link>
           </div>
         ) : filtered.length === 0 ? (
+          /* Estado vacío con filtro: no hay resultados que coincidan */
           <div className="text-center py-16">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#121a24] flex items-center justify-center">
               <svg className="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
