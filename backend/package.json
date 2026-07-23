@@ -1,4 +1,5 @@
 {
+  "_comment": "BACKEND — Servidor Node.js + Express. Este archivo lista las dependencias del backend y los scripts disponibles. npm lo usa para instalar los paquetes necesarios (npm install) y ejecutar comandos (npm run dev, npm start).",
   "name": "movies-backend",
   "version": "0.1.0",
   "main": "src/server.js",
@@ -8,14 +9,14 @@
     "prisma": "prisma"
   },
   "dependencies": {
+    "@prisma/client": "^5.0.0",
     "axios": "^1.4.0",
-    "node-cache": "^5.1.2",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
-    "@prisma/client": "^5.0.0"
+    "node-cache": "^5.1.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.22",

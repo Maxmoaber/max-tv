@@ -1,4 +1,5 @@
 {
+  "_comment": "FRONTEND — Cliente React + Vite. Define las dependencias del frontend y los scripts para desarrollo, build y preview. npm install instala todo; npm run dev inicia el servidor de desarrollo en http://localhost:5173.",
   "name": "movies-frontend",
   "version": "0.1.0",
   "private": true,

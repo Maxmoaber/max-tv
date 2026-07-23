@@ -429,7 +429,51 @@ max-tv/
 └── README.md
   </div>
 
-  <!-- 11. POSIBLES MEJORAS -->
+  <!-- 11. ARCHIVOS DE CONFIGURACIÓN DE PAQUETES -->
+  <h2>11. Archivos package.json y package-lock.json</h2>
+
+  <h3>11.1 package.json (backend y frontend)</h3>
+  <p>
+    Cada subproyecto (<code>backend/</code> y <code>frontend/</code>) tiene su propio
+    <code>package.json</code>. Este archivo es el manifiesto del proyecto para npm:
+  </p>
+  <ul>
+    <li><strong>name / version:</strong> Identificador del paquete.</li>
+    <li><strong>main:</strong> Punto de entrada del servidor (solo backend).</li>
+    <li><strong>scripts:</strong> Comandos disponibles — <code>npm run dev</code> inicia el servidor de desarrollo, <code>npm start</code> ejecuta el servidor en producción.</li>
+    <li><strong>dependencies:</strong> Paquetes necesarios para que la aplicación funcione en producción (Express, Prisma, React, etc.).</li>
+    <li><strong>devDependencies:</strong> Paquetes solo útiles durante el desarrollo (Nodemon, Vite, Tailwind, etc.).</li>
+    <li><strong>private:</strong> (frontend) Evita publicar accidentalmente el paquete en npm.</li>
+  </ul>
+  <p>
+    ⚠️ <strong>package.json se edita manualmente</strong> cuando se agrega o quita una dependencia mediante <code>npm install &lt;paquete&gt;</code> — npm lo actualiza automáticamente.
+  </p>
+
+  <h3>11.2 package-lock.json</h3>
+  <p>
+    <strong>NO se edita manualmente.</strong> Es generado automáticamente por npm cuando se ejecuta <code>npm install</code>.
+    Su propósito es <strong>bloquear las versiones exactas</strong> de cada dependencia y sus sub-dependencias,
+    para que todos los desarrolladores (y los servidores de producción) instalen exactamente los mismos paquetes.
+  </p>
+  <ul>
+    <li>Contiene el árbol completo de dependencias con versiones exactas, integridad (hashes) y URLs de descarga.</li>
+    <li>Debe incluirse en el repositorio (git) para garantizar builds reproducibles.</li>
+    <li>Si se elimina, npm lo regenera automáticamente en el próximo <code>npm install</code>.</li>
+  </ul>
+
+  <h3>11.3 Diferencia entre dependencies y devDependencies</h3>
+  <table>
+    <tr><th>Tipo</th><th>Incluidas en producción</th><th>Ejemplos</th></tr>
+    <tr><td>dependencies</td><td>Sí</td><td>express, react, axios, bcrypt, prisma/client</td></tr>
+    <tr><td>devDependencies</td><td>No</td><td>vite, nodemon, tailwindcss, prisma (CLI)</td></tr>
+  </table>
+  <p>
+    En el backend de Render se ejecuta <code>npm install --production</code> para evitar instalar herramientas de desarrollo,
+    lo que reduce el tamaño del deploy. Por eso <code>prisma</code> (CLI) está en devDependencies pero
+    <code>@prisma/client</code> está en dependencies — el CLI solo se necesita para migraciones, el client se usa en runtime.
+  </p>
+
+  <!-- 12. POSIBLES MEJORAS -->
   <h2>11. Posibles Mejoras Futuras</h2>
   <ul>
     <li><strong>Reproductor de video integrado:</strong> Reproducir películas/series completas dentro de la plataforma.</li>
