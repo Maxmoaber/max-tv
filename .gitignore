@@ -1,6 +1,6 @@
 node_modules/
 .env
-backend/dev.db
+*.db
 *.log
 *.pid
 dist/

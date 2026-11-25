@@ -28,6 +28,24 @@ const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+// ─── Snapshot offline (fallback sin internet / sin API key) ────────
+/*
+ * Si existe backend/data/snapshot.json (generado con scripts/seed.js),
+ * se usa como fuente de datos cuando TMDb no está disponible
+ * (sin TMDB_API_KEY o sin conexión). Las imágenes apuntan a
+ * /snapshot/* servidas por el frontend (Vite las sirve desde public/).
+ */
+let snapshot = null;
+try {
+  const snapPath = require('path').join(__dirname, '..', 'data', 'snapshot.json');
+  if (require('fs').existsSync(snapPath)) {
+    snapshot = JSON.parse(require('fs').readFileSync(snapPath, 'utf8'));
+    console.log(`Snapshot offline cargado (${snapshot.details?.length || 0} detalles, ${snapshot.trending?.length || 0} tendencias)`);
+  }
+} catch (e) {
+  console.warn('Snapshot offline no disponible:', e.message);
+}
+
 // ─── Inicialización ─────────────────────────────────────────────────
 
 const prisma = new PrismaClient();
@@ -36,6 +54,8 @@ const app = express();
 const PORT = parseInt(process.env.PORT, 10) || 4000;
 const HOST = process.env.HOST || '0.0.0.0';
 const JWT_SECRET = process.env.JWT_SECRET || 'devsecret';
+const TMDB_KEY = process.env.TMDB_API_KEY;
+const HAS_TMDB = Boolean(TMDB_KEY) && TMDB_KEY !== 'your_tmdb_api_key_here' && TMDB_KEY.length > 10;
 
 // Middleware globales
 app.use(cors({ origin: true, credentials: true })); // Permite peticiones desde cualquier origen
@@ -222,92 +242,113 @@ try {
 /**
  * GET /api/tmdb/trending
  * Devuelve las películas/series en tendencia de la semana.
- * Si no hay API key configurada, devuelve datos demo.
+ * Fallback: snapshot offline → datos demo.
  */
 app.get('/api/tmdb/trending', async (req, res) => {
-  if (!process.env.TMDB_API_KEY || !tmdbService) return res.json(demoItems);
-  try {
-    const media = req.query.media || 'all';
-    const page = req.query.page || 1;
-    const language = req.query.language || 'es-ES';
-    const items = await tmdbService.trending(media, page, language);
-    res.json(items);
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({ error: 'TMDb error' });
+  if (HAS_TMDB && tmdbService) {
+    try {
+      const media = req.query.media || 'all';
+      const page = req.query.page || 1;
+      const language = req.query.language || 'es-ES';
+      const items = await tmdbService.trending(media, page, language);
+      return res.json(items);
+    } catch (e) {
+      console.error('TMDb trending falló, intentando snapshot:', e.message);
+    }
   }
+  if (snapshot?.trending?.length) return res.json(snapshot.trending);
+  res.json(demoItems);
 });
 
 /**
  * GET /api/tmdb/search
  * Busca películas, series y personas en TMDb.
- * Parámetros: q (término de búsqueda obligatorio), page, language.
+ * Fallback: filtrado local sobre el snapshot.
  */
 app.get('/api/tmdb/search', async (req, res) => {
-  if (!process.env.TMDB_API_KEY || !tmdbService) return res.json([]);
-  try {
-    const q = req.query.q;
-    if (!q) return res.status(400).json({ error: 'missing q' });
-    const page = req.query.page || 1;
-    const language = req.query.language || 'es-ES';
-    const items = await tmdbService.search(q, page, language);
-    res.json(items);
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({ error: 'TMDb error' });
+  const q = (req.query.q || '').toLowerCase().trim();
+  if (!q) return res.status(400).json({ error: 'missing q' });
+  if (HAS_TMDB && tmdbService) {
+    try {
+      const page = req.query.page || 1;
+      const language = req.query.language || 'es-ES';
+      const items = await tmdbService.search(q, page, language);
+      return res.json(items);
+    } catch (e) {
+      console.error('TMDb search falló, intentando snapshot:', e.message);
+    }
   }
+  if (snapshot) {
+    const pool = [...(snapshot.trending || []), ...(snapshot.details || [])];
+    const seen = new Set();
+    const results = pool.filter(i => {
+      if (seen.has(i.id)) return false;
+      seen.add(i.id);
+      return (i.title || '').toLowerCase().includes(q);
+    });
+    return res.json(results);
+  }
+  res.json([]);
 });
 
 /**
- * GET /api/tmdb/movie/:id
- * Obtiene detalles completos de una película (incluyendo tráiler, créditos, etc.)
+ * GET /api/tmdb/movie/:id  y  GET /api/tmdb/tv/:id
+ * Detalle completo. Fallback: detalle del snapshot.
  */
+function snapshotDetail(req, res, mediaType) {
+  if (!snapshot) return res.status(404).json({ error: 'not available' });
+  const id = parseInt(req.params.id, 10);
+  const found = (snapshot.details || []).find(d => d.id === id && d.mediaType === mediaType);
+  if (!found) return res.status(404).json({ error: 'not in snapshot' });
+  return res.json(found);
+}
+
 app.get('/api/tmdb/movie/:id', async (req, res) => {
-  if (!process.env.TMDB_API_KEY || !tmdbService) return res.status(404).json({ error: 'not available' });
-  try {
-    const id = req.params.id;
-    const language = req.query.language || 'es-ES';
-    const data = await tmdbService.movieDetails(id, language);
-    res.json(data);
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({ error: 'TMDb error' });
+  if (HAS_TMDB && tmdbService) {
+    try {
+      const id = req.params.id;
+      const language = req.query.language || 'es-ES';
+      const data = await tmdbService.movieDetails(id, language);
+      return res.json(data);
+    } catch (e) {
+      console.error('TMDb movie falló, intentando snapshot:', e.message);
+    }
   }
+  snapshotDetail(req, res, 'movie');
 });
 
-/**
- * GET /api/tmdb/tv/:id
- * Obtiene detalles completos de una serie de TV.
- */
 app.get('/api/tmdb/tv/:id', async (req, res) => {
-  if (!process.env.TMDB_API_KEY || !tmdbService) return res.status(404).json({ error: 'not available' });
-  try {
-    const id = req.params.id;
-    const language = req.query.language || 'es-ES';
-    const data = await tmdbService.tvDetails(id, language);
-    res.json(data);
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({ error: 'TMDb error' });
+  if (HAS_TMDB && tmdbService) {
+    try {
+      const id = req.params.id;
+      const language = req.query.language || 'es-ES';
+      const data = await tmdbService.tvDetails(id, language);
+      return res.json(data);
+    } catch (e) {
+      console.error('TMDb tv falló, intentando snapshot:', e.message);
+    }
   }
+  snapshotDetail(req, res, 'tv');
 });
 
 /**
  * GET /api/tmdb/genre/:genreId
- * Descubre contenido por género (usando /discover de TMDb).
+ * Contenido por género. Fallback: géneros del snapshot.
  */
 app.get('/api/tmdb/genre/:genreId', async (req, res) => {
-  if (!process.env.TMDB_API_KEY || !tmdbService) return res.status(404).json({ error: 'not available' });
-  try {
-    const genreId = parseInt(req.params.genreId);
-    const page = req.query.page || 1;
-    const language = req.query.language || 'es-ES';
-    const items = await tmdbService.discover(genreId, page, language);
-    res.json(items);
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({ error: 'TMDb error' });
+  const genreId = req.params.genreId;
+  if (HAS_TMDB && tmdbService) {
+    try {
+      const page = req.query.page || 1;
+      const language = req.query.language || 'es-ES';
+      const items = await tmdbService.discover(parseInt(genreId), page, language);
+      return res.json(items);
+    } catch (e) {
+      console.error('TMDb genre falló, intentando snapshot:', e.message);
+    }
   }
+  if (snapshot?.genres?.[genreId]) return res.json(snapshot.genres[genreId]);
+  res.json([]);
 });
 
 // ─── Arranque del servidor ──────────────────────────────────────────

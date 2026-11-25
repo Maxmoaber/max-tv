@@ -1,46 +1,63 @@
 # 🎬 Max.tv — Plataforma de Streaming
 
-Aplicación web para explorar películas y series en tendencia, buscar contenido, guardar favoritos y ver tráilers. Consume la API de **TMDb** para obtener contenido real.
+Aplicación web para explorar películas y series en tendencia, buscar contenido,
+guardar favoritos y ver tráilers. Consume la API de **TMDb** para obtener contenido real.
+
+> **Rama `portable-offline`:** versión demo portable con **SQLite** y **snapshot offline**
+> (datos + imágenes reales de TMDb) — funciona **sin internet** después del setup.
+> La rama `documented` es la versión de producción (PostgreSQL/Neon + TMDb en vivo).
 
 ## Stack
 
-| Frontend | Backend | Base de datos | Hosting |
+| Frontend | Backend | Base de datos | Contenido |
 |---|---|---|---|
-| React 18 | Node.js + Express | PostgreSQL (Neon) | Netlify + Render |
-| Vite 5 | Prisma ORM | | |
-| Tailwind CSS 3 | JWT + bcrypt | | |
-
-## Documentación completa
-
-👉 **[docs/index.html](docs/index.html)** — Abrir en el navegador para ver:
-- Arquitectura del sistema
-- Casos de uso (explorar, buscar, registrarse, favoritos, detalle)
-- Instalación paso a paso
-- Endpoints de la API
-- Esquema de base de datos
-- Variables de entorno
-- Despliegue en Netlify + Render
-- Estructura del proyecto
+| React 18 + Vite 5 | Node.js + Express | **SQLite** (local) | TMDb API (en vivo o snapshot offline) |
+| Tailwind CSS 3 | Prisma ORM | | |
+| React Router 6 | JWT + bcrypt | | |
 
 ## Inicio rápido
 
 ```bash
-# Backend
-cd backend
-cp .env.example .env    # Configurar TMDB_API_KEY y DATABASE_URL
-npm install
-npx prisma generate
-npx prisma db push
-npm run dev
+# 1. Instalar todo + generar Prisma + crear SQLite
+npm run setup
 
-# Frontend (otra terminal)
-cd frontend
-cp .env.example .env    # Configurar VITE_BACKEND_URL
-npm install
+# 2. Variables de entorno (primera vez)
+cp backend/.env.example backend/.env    # Windows: copy backend\.env.example backend\.env
+cp frontend/.env.example frontend/.env
+
+# 3. Levantar backend (:4001) + frontend (:5173)
 npm run dev
 ```
 
-## Enlaces
+Abrir **http://localhost:5173**
+
+## Comandos
+
+| Comando | Descripción |
+|---|---|
+| `npm run setup` | Instala dependencias y prepara SQLite |
+| `npm run dev` | Frontend + backend en paralelo |
+| `npm run seed` | Regenera el snapshot offline (requiere internet + `TMDB_API_KEY`) |
+| `npm run build` | Build de producción del frontend |
+
+## Modo offline
+
+El repositorio incluye un snapshot con **20 tendencias, 4 géneros, 18 detalles y 170 imágenes**
+descargadas de TMDb (`backend/data/snapshot.json` + `frontend/public/snapshot/`).
+
+- **Sin `TMDB_API_KEY` o sin internet** → el backend sirve el snapshot automáticamente.
+- **Con `TMDB_API_KEY` e internet** → contenido en vivo de TMDb.
+- Regenerar snapshot: `npm run seed` (con internet).
+
+## Documentación
+
+👉 **[docs/index.html](docs/index.html)** — Arquitectura (Mermaid), casos de uso,
+endpoints, esquema de BD, instalación y despliegue.
+
+👉 **[AGENTS.md](AGENTS.md)** — Guía para agentes/desarrolladores: cómo ejecutar,
+estructura, convenciones y troubleshooting.
+
+## Enlaces (versión producción)
 
 - Frontend (Netlify): https://spiffy-mousse-e419c1.netlify.app/
-- Documentación: [docs/index.html](docs/index.html)
+- Backend (Render): https://max-tv-backend.onrender.com

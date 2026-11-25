@@ -32,7 +32,7 @@ const TMDB_BASE = 'https://api.themoviedb.org/3';                  // URL base d
 const API_KEY = process.env.TMDB_API_KEY;                          // API key desde variable de entorno
 
 // Cliente Axios preconfigurado con la base URL y la API key
-const client = axios.create({ baseURL: TMDB_BASE, params: { api_key: API_KEY } });
+const client = axios.create({ baseURL: TMDB_BASE, params: { api_key: API_KEY }, timeout: 8000 });
 
 // ─── Utilidades ─────────────────────────────────────────────────────
 

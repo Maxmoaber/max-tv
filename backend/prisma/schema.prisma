@@ -1,29 +1,27 @@
-/*
- * ====================================================================
- *  schema.prisma — Esquema de la base de datos (Prisma ORM)
- * ====================================================================
- *
- *  Prisma es un ORM (Object-Relational Mapping) que nos permite
- *  trabajar con la base de datos usando código JavaScript en lugar
- *  de SQL. Este archivo define la estructura de las tablas.
- *
- *  Base de datos: PostgreSQL (en producción vía Neon; local SQLite)
- *
- *  Tablas:
- *    User     → Almacena los usuarios registrados (email + password hash)
- *    Favorite → Almacena los favoritos de cada usuario
- *
- *  Relaciones:
- *    Un User puede tener muchos Favorite (1:N).
- *    Cada Favorite pertenece a un único User.
- */
+// ====================================================================
+//  schema.prisma — Esquema de la base de datos (Prisma ORM)
+// ====================================================================
+//
+//  Prisma es un ORM (Object-Relational Mapping) que nos permite
+//  trabajar con la base de datos usando código JavaScript en lugar
+//  de SQL. Este archivo define la estructura de las tablas.
+//
+//  Base de datos: SQLite (portable — sin servidor externo)
+//
+//  Tablas:
+//    User     → Almacena los usuarios registrados (email + password hash)
+//    Favorite → Almacena los favoritos de cada usuario
+//
+//  Relaciones:
+//    Un User puede tener muchos Favorite (1:N).
+//    Cada Favorite pertenece a un único User.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
