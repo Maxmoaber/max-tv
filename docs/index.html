@@ -4,493 +4,1148 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Max.tv — Documentación del Proyecto</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <style>
     :root {
       --bg: #0a0e14;
       --bg2: #121a24;
       --bg3: #1a2533;
+      --bg4: #223040;
       --border: #1e2a36;
+      --border2: #2a3a4a;
       --text: #e6eef8;
       --text2: #9aa9b9;
       --accent: #e50914;
-      --accent2: #ffd700;
+      --accent-soft: rgba(229, 9, 20, 0.15);
+      --yellow: #ffd700;
+      --green: #22c55e;
+      --blue: #3b82f6;
+      --purple: #a855f7;
+      --cyan: #06b6d4;
+      --orange: #f97316;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.35);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.7;
     }
-    .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
-    h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-    h2 { font-size: 1.6rem; margin-top: 3rem; margin-bottom: 1rem; color: var(--accent); border-bottom: 2px solid var(--border); padding-bottom: 0.4rem; }
-    h3 { font-size: 1.2rem; margin-top: 2rem; margin-bottom: 0.6rem; color: #fff; }
+
+    /* ─── Nav lateral ─── */
+    .layout { display: flex; min-height: 100vh; }
+    nav.sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    nav.sidebar .brand {
+      padding: 0 1.25rem 1rem;
+      font-weight: 800;
+      font-size: 1.15rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0.75rem;
+    }
+    nav.sidebar .brand span { color: var(--accent); }
+    nav.sidebar a {
+      display: block;
+      padding: 0.45rem 1.25rem;
+      color: var(--text2);
+      text-decoration: none;
+      font-size: 0.85rem;
+      border-left: 3px solid transparent;
+      transition: all 0.15s;
+    }
+    nav.sidebar a:hover, nav.sidebar a.active {
+      color: var(--text);
+      background: var(--bg3);
+      border-left-color: var(--accent);
+    }
+    main { flex: 1; min-width: 0; }
+    .container { max-width: 920px; margin: 0 auto; padding: 2.5rem 2rem 5rem; }
+
+    /* ─── Tipografía ─── */
+    h1 { font-size: 2.6rem; font-weight: 800; letter-spacing: -0.03em; }
+    h2 {
+      font-size: 1.55rem;
+      font-weight: 700;
+      margin-top: 3.5rem;
+      margin-bottom: 1.1rem;
+      color: #fff;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    h2 .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px; height: 32px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    h3 { font-size: 1.15rem; font-weight: 650; margin-top: 2rem; margin-bottom: 0.65rem; color: #fff; }
     p, li { color: var(--text2); }
-    a { color: var(--accent); }
+    p { margin-bottom: 0.85rem; }
+    strong { color: var(--text); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1rem; }
+    li { margin-bottom: 0.35rem; }
+
+    /* ─── Hero ─── */
+    .hero {
+      background: linear-gradient(135deg, var(--bg2) 0%, var(--bg3) 50%, #1a1020 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem 2.25rem;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 220px; height: 220px;
+      background: radial-gradient(circle, rgba(229,9,20,0.25), transparent 70%);
+      pointer-events: none;
+    }
+    .hero .subtitle { color: var(--text2); font-size: 1.05rem; margin: 0.6rem 0 1.4rem; max-width: 560px; }
+    .badges { display: flex; flex-wrap: wrap; gap: 0.45rem; }
     .badge {
       display: inline-block;
       background: var(--bg3);
       color: var(--text);
-      padding: 0.2rem 0.6rem;
-      border-radius: 4px;
+      border: 1px solid var(--border2);
+      padding: 0.28rem 0.75rem;
+      border-radius: 999px;
       font-size: 0.78rem;
-      margin: 0.15rem;
+      font-weight: 600;
     }
-    .badge-accent { background: var(--accent); color: #fff; }
-    .badge-yellow { background: var(--accent2); color: #000; }
-    pre, code {
+    .badge-accent { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .badge-yellow { background: var(--yellow); border-color: var(--yellow); color: #000; }
+    .badge-green { background: rgba(34,197,94,0.15); border-color: var(--green); color: var(--green); }
+    .badge-blue { background: rgba(59,130,246,0.15); border-color: var(--blue); color: var(--blue); }
+
+    /* ─── Stats ─── */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.85rem; margin: 1.5rem 0 0.5rem; }
+    .stat {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+      text-align: center;
+    }
+    .stat .value { font-size: 1.55rem; font-weight: 800; color: #fff; }
+    .stat .label { font-size: 0.75rem; color: var(--text2); margin-top: 0.15rem; }
+
+    /* ─── Cards ─── */
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 1.25rem 0; }
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.35rem 1.35rem 1.2rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .card:hover { border-color: var(--border2); transform: translateY(-2px); }
+    .card .icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem;
+      margin-bottom: 0.75rem;
+    }
+    .card h4 { font-size: 0.98rem; font-weight: 700; color: #fff; margin-bottom: 0.4rem; }
+    .card p { font-size: 0.86rem; margin: 0; line-height: 1.55; }
+    .icon-red { background: var(--accent-soft); }
+    .icon-yellow { background: rgba(255,215,0,0.12); }
+    .icon-blue { background: rgba(59,130,246,0.12); }
+    .icon-green { background: rgba(34,197,94,0.12); }
+    .icon-purple { background: rgba(168,85,247,0.12); }
+    .icon-cyan { background: rgba(6,182,212,0.12); }
+
+    /* ─── Casos de uso ─── */
+    .usecase {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.6rem;
+      margin: 1.25rem 0;
+    }
+    .usecase-header { display: flex; align-items: center; gap: 0.85rem; margin-bottom: 0.85rem; }
+    .usecase-header .uc-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .usecase-header h3 { margin: 0; font-size: 1.08rem; }
+    .usecase-header .actor {
+      font-size: 0.75rem;
+      color: var(--text2);
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      padding: 0.15rem 0.6rem;
+      border-radius: 999px;
+      margin-left: auto;
+      white-space: nowrap;
+    }
+    .flow { list-style: none; padding: 0; margin: 0; counter-reset: step; }
+    .flow li {
+      position: relative;
+      padding: 0.55rem 0 0.55rem 2.6rem;
+      color: var(--text2);
+      font-size: 0.9rem;
+      border-left: 2px solid var(--border2);
+      margin-left: 14px;
+    }
+    .flow li:last-child { border-left-color: transparent; }
+    .flow li::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: -15px;
+      top: 0.55rem;
+      width: 28px; height: 28px;
+      background: var(--bg3);
+      border: 2px solid var(--accent);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .flow li:last-child::before { background: var(--accent); }
+    .flow code, p code, td code, li code {
+      font-family: 'JetBrains Mono', 'Consolas', monospace;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 5px;
+      padding: 0.1rem 0.4rem;
+      font-size: 0.82em;
+      color: var(--cyan);
+    }
+
+    /* ─── Diagramas Mermaid ─── */
+    .diagram-wrap {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem 1.25rem;
+      margin: 1.25rem 0;
+      overflow-x: auto;
+      text-align: center;
+    }
+    .diagram-wrap .caption {
+      font-size: 0.8rem;
+      color: var(--text2);
+      margin-top: 1rem;
+      text-align: center;
+    }
+    .mermaid { display: flex; justify-content: center; }
+    .mermaid svg { max-width: 100%; height: auto; }
+
+    /* ─── Tablas ─── */
+    .table-wrap {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 1.25rem 0;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th {
+      background: var(--bg3);
+      color: #fff;
+      font-weight: 650;
+      text-align: left;
+      padding: 0.75rem 1rem;
+      border-bottom: 2px solid var(--border2);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text2);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    td:first-child { color: var(--text); font-weight: 500; }
+    .method {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 5px;
+      font-family: monospace;
+    }
+    .m-get { background: rgba(34,197,94,0.15); color: var(--green); }
+    .m-post { background: rgba(59,130,246,0.15); color: var(--blue); }
+    .m-delete { background: rgba(229,9,20,0.15); color: var(--accent); }
+    .auth-yes { color: var(--yellow); font-weight: 600; font-size: 0.82rem; }
+    .auth-no { color: var(--text2); font-size: 0.82rem; }
+
+    /* ─── Código ─── */
+    pre {
       font-family: 'JetBrains Mono', 'Consolas', monospace;
       background: var(--bg2);
       border: 1px solid var(--border);
-      border-radius: 6px;
-    }
-    code { padding: 0.15rem 0.4rem; font-size: 0.85rem; }
-    pre {
-      padding: 1rem;
+      border-radius: var(--radius);
+      padding: 1.15rem 1.25rem;
       overflow-x: auto;
       margin: 1rem 0;
-      font-size: 0.85rem;
-      line-height: 1.5;
-    }
-    pre code { background: none; border: none; padding: 0; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1rem 0;
-    }
-    th, td {
-      text-align: left;
-      padding: 0.6rem 0.8rem;
-      border: 1px solid var(--border);
-    }
-    th { background: var(--bg2); color: #fff; font-weight: 600; }
-    td { color: var(--text2); }
-    .diagram-box {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin: 1rem 0;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
+      font-size: 0.83rem;
       line-height: 1.6;
-      white-space: pre;
-      overflow-x: auto;
+      color: #c9d7e6;
     }
-    .subtitle { color: var(--text2); font-size: 1.05rem; margin-bottom: 2rem; }
-    ul, ol { padding-left: 1.5rem; }
-    li { margin-bottom: 0.3rem; }
-    .screenshot-placeholder {
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: inherit; }
+    code { font-family: 'JetBrains Mono', 'Consolas', monospace; }
+
+    /* ─── Callout ─── */
+    .callout {
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin: 1.25rem 0;
+      font-size: 0.9rem;
+      border: 1px solid;
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+    .callout .c-icon { font-size: 1.15rem; flex-shrink: 0; }
+    .callout p { margin: 0; }
+    .callout-info { background: rgba(59,130,246,0.08); border-color: rgba(59,130,246,0.3); }
+    .callout-warn { background: rgba(249,115,22,0.08); border-color: rgba(249,115,22,0.3); }
+    .callout-ok { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.3); }
+
+    /* ─── Pasos de instalación ─── */
+    .install-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.25rem 0; }
+    .install-col {
       background: var(--bg2);
-      border: 2px dashed var(--border);
-      border-radius: 8px;
-      padding: 2.5rem;
-      text-align: center;
-      color: var(--text2);
-      margin: 1rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.35rem;
     }
+    .install-col h4 {
+      font-size: 0.95rem;
+      color: #fff;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .install-col h4 .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-be { background: var(--blue); }
+    .dot-fe { background: var(--green); }
+
+    /* ─── Struct tree ─── */
+    .tree {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.35rem 1.5rem;
+      margin: 1.25rem 0;
+      font-family: 'JetBrains Mono', 'Consolas', monospace;
+      font-size: 0.8rem;
+      line-height: 1.75;
+      overflow-x: auto;
+      color: var(--text2);
+      white-space: pre;
+    }
+    .tree .dir { color: var(--blue); font-weight: 600; }
+    .tree .file { color: var(--text); }
+    .tree .comment { color: #5a6a7a; }
+
+    /* ─── Footer ─── */
     footer {
       text-align: center;
-      padding: 2rem 0;
+      padding: 2.5rem 0 1rem;
       border-top: 1px solid var(--border);
-      margin-top: 3rem;
+      margin-top: 4rem;
       color: var(--text2);
       font-size: 0.85rem;
+    }
+    footer a { color: var(--text2); }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 860px) {
+      nav.sidebar { display: none; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .install-grid { grid-template-columns: 1fr; }
+      .container { padding: 1.5rem 1.1rem 3rem; }
+      h1 { font-size: 1.9rem; }
+      .usecase-header { flex-wrap: wrap; }
+      .usecase-header .actor { margin-left: 0; }
     }
   </style>
 </head>
 <body>
-<div class="container">
+<div class="layout">
 
-  <!-- TÍTULO -->
-  <h1>🎬 Max.tv</h1>
-  <p class="subtitle">
-    Plataforma web de streaming de películas y series — Documentación del proyecto
-  </p>
-  <p>
-    <span class="badge badge-accent">React</span>
-    <span class="badge badge-accent">Vite</span>
-    <span class="badge badge-accent">Tailwind CSS</span>
-    <span class="badge badge-accent">Node.js</span>
-    <span class="badge badge-accent">Express</span>
-    <span class="badge badge-accent">Prisma ORM</span>
-    <span class="badge badge-accent">PostgreSQL</span>
-    <span class="badge badge-yellow">TMDb API</span>
-  </p>
+  <!-- ══════════ NAV ══════════ -->
+  <nav class="sidebar">
+    <div class="brand">🎬 Max<span>.tv</span></div>
+    <a href="#overview">Descripción general</a>
+    <a href="#architecture">Arquitectura</a>
+    <a href="#usecases">Casos de uso</a>
+    <a href="#stack">Stack tecnológico</a>
+    <a href="#api">Endpoints API</a>
+    <a href="#database">Base de datos</a>
+    <a href="#install">Instalación</a>
+    <a href="#env">Variables de entorno</a>
+    <a href="#deploy">Despliegue</a>
+    <a href="#structure">Estructura</a>
+    <a href="#packages">package.json</a>
+    <a href="#improvements">Mejoras futuras</a>
+  </nav>
 
-  <!-- 1. DESCRIPCIÓN GENERAL -->
-  <h2>1. Descripción General</h2>
-  <p>
-    Max.tv es una aplicación web que permite explorar películas y series en tendencia,
-    buscar contenido, guardar favoritos y ver tráilers. Consume la API de
-    <strong>The Movie Database (TMDb)</strong> para obtener contenido real y utiliza
-    un backend propio para la gestión de usuarios y favoritos.
-  </p>
-  <p>
-    <strong>Objetivo académico:</strong> El proyecto demuestra el uso de tecnologías
-    web modernas: frontend React con Vite, backend Node.js/Express, base de datos
-    PostgreSQL (Neon), autenticación JWT y consumo de APIs externas.
-  </p>
+  <main>
+  <div class="container">
 
-  <!-- 2. ARQUITECTURA -->
-  <h2>2. Arquitectura del Sistema</h2>
-  <p>El proyecto sigue una arquitectura <strong>cliente-servidor</strong> con dos componentes principales:</p>
-  <ul>
-    <li><strong>Frontend (React + Vite):</strong> Interfaz de usuario, alojado en Netlify.</li>
-    <li><strong>Backend (Node.js + Express):</strong> API REST, alojado en Render/Railway.</li>
-    <li><strong>Base de datos (PostgreSQL):</strong> Almacenamiento en Neon.</li>
-    <li><strong>API externa TMDb:</strong> Fuente de datos de películas y series.</li>
-  </ul>
+    <!-- ══════════ HERO ══════════ -->
+    <div class="hero" id="overview">
+      <h1>🎬 Max.tv</h1>
+      <p class="subtitle">
+        Plataforma web de streaming para explorar películas y series en tendencia,
+        buscar contenido, guardar favoritos y ver tráilers — con datos reales de
+        <strong style="color:var(--yellow)">TMDb</strong>.
+      </p>
+      <div class="badges">
+        <span class="badge badge-accent">React 18</span>
+        <span class="badge badge-accent">Vite 5</span>
+        <span class="badge badge-accent">Tailwind CSS</span>
+        <span class="badge badge-accent">Node.js</span>
+        <span class="badge badge-accent">Express</span>
+        <span class="badge badge-accent">Prisma ORM</span>
+        <span class="badge badge-accent">PostgreSQL</span>
+        <span class="badge badge-yellow">TMDb API</span>
+        <span class="badge badge-green">JWT Auth</span>
+        <span class="badge badge-blue">Netlify + Render</span>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="value">2</div><div class="label">Apps (FE + BE)</div></div>
+        <div class="stat"><div class="value">13</div><div class="label">Endpoints API</div></div>
+        <div class="stat"><div class="value">2</div><div class="label">Tablas en BD</div></div>
+        <div class="stat"><div class="value">5</div><div class="label">Páginas React</div></div>
+      </div>
+    </div>
 
-  <div class="diagram-box">
-+-------------------+        HTTPS        +-------------------+
-|                   |  ──────────────────► |                   |
-|   Netlify         |                      |   Render/Railway  |
-|   (Frontend)      |  ◄────────────────── |   (Backend)       |
-|   React + Vite    |       JSON/API       |   Express + Node  |
-|                   |                      |                   |
-+---------+---------+                      +--------+----------+
-          |                                          |
-          |                                          | POSTGRESQL
-          |                                          ▼
-          |                                   +---------------+
-          |                                   |   Neon DB     |
-          |                                   |  (PostgreSQL) |
-          |                                   +---------------+
-          |
-          |                           +-------------------+
-          +--------------------------► |   TMDb API       |
-              (proxy vía backend)      |   (themoviedb)   |
-                                       +-------------------+
-  </div>
+    <p>
+      Max.tv es una aplicación <strong>cliente-servidor</strong> con un frontend React
+      que consume una API REST propia en Node.js. El backend actúa como
+      <strong>proxy seguro hacia TMDb</strong> (nunca se expone la API key en el cliente)
+      y gestiona usuarios y favoritos con <strong>JWT</strong> sobre <strong>PostgreSQL (Neon)</strong>.
+    </p>
 
-  <!-- 3. CASOS DE USO -->
-  <h2>3. Casos de Uso</h2>
+    <!-- ══════════ 1. ARQUITECTURA ══════════ -->
+    <h2 id="architecture"><span class="num">1</span> Arquitectura del Sistema</h2>
+    <p>
+      Arquitectura <strong>cliente-servidor</strong> de tres capas: presentación (React),
+      lógica de negocio (Express) y datos (PostgreSQL + TMDb).
+    </p>
 
-  <h3>3.1 Explorar contenido en tendencia</h3>
-  <p><strong>Actores:</strong> Usuario (autenticado o no)</p>
-  <p><strong>Flujo:</strong></p>
-  <ol>
-    <li>El usuario ingresa a la página principal (/).</li>
-    <li>El frontend solicita <code>GET /api/tmdb/trending</code> al backend.</li>
-    <li>El backend consulta TMDb y devuelve las tendencias de la semana.</li>
-    <li>Se muestran en el Hero (banner principal) y en el carrusel "Tendencias".</li>
-    <li>El usuario puede navegar los carruseles con los botones izquierda/derecha.</li>
-  </ol>
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TB
+    subgraph Client["🌐 Cliente — Navegador"]
+        UI["<b>Frontend React + Vite</b><br/>Home · Search · Auth · Favorites<br/>Tailwind CSS · React Router"]
+    end
 
-  <h3>3.2 Buscar películas y series</h3>
-  <p><strong>Actores:</strong> Usuario (autenticado o no)</p>
-  <p><strong>Flujo:</strong></p>
-  <ol>
-    <li>El usuario escribe en la barra de búsqueda del Header.</li>
-    <li>Con debounce de 300ms, se consulta <code>GET /api/tmdb/search?q=...</code>.</li>
-    <li>Aparece un dropdown con hasta 8 sugerencias.</li>
-    <li>Al hacer clic en una sugerencia o presionar Enter, navega a <code>/search?q=...</code>.</li>
-    <li>La página SearchResults muestra todos los resultados en grilla.</li>
-    <li>El usuario puede cambiar entre español e inglés.</li>
-  </ol>
+    subgraph Netlify["☁️ Netlify"]
+        CDN["<b>Hosting estático</b><br/>dist/ + redirects SPA"]
+    end
 
-  <h3>3.3 Registrarse e iniciar sesión</h3>
-  <p><strong>Actores:</strong> Usuario no autenticado</p>
-  <p><strong>Flujo:</strong></p>
-  <ol>
-    <li>El usuario navega a /auth.</li>
-    <li>Selecciona "Crear cuenta" o "Iniciar sesión".</li>
-    <li>Completa email y contraseña y envía el formulario.</li>
-    <li>El backend valida las credenciales contra PostgreSQL (Neon).</li>
-    <li>Si es exitoso, recibe un token JWT que se guarda en localStorage.</li>
-    <li>El usuario es redirigido al home con sesión iniciada.</li>
-  </ol>
+    subgraph Render["☁️ Render"]
+        BE["<b>Backend Express</b><br/>API REST · JWT · bcrypt<br/>:4001"]
+    end
 
-  <h3>3.4 Guardar y gestionar favoritos</h3>
-  <p><strong>Actores:</strong> Usuario autenticado</p>
-  <p><strong>Flujo:</strong></p>
-  <ol>
-    <li>El usuario pasa el mouse sobre un póster y hace clic en "Favoritos".</li>
-    <li>Se envía <code>POST /api/favorites</code> con el token JWT.</li>
-    <li>El item se guarda en la base de datos asociado al usuario.</li>
-    <li>En la página /favorites, el usuario ve todos sus favoritos.</li>
-    <li>Puede filtrar por tipo (película/serie) y buscar localmente.</li>
-    <li>Puede eliminar favoritos haciendo clic en el botón nuevamente.</li>
-  </ol>
+    subgraph Neon["🗄️ Neon"]
+        PG[("<b>PostgreSQL</b><br/>User · Favorite")]
+    end
 
-  <h3>3.5 Ver detalle y tráiler</h3>
-  <p><strong>Actores:</strong> Usuario (autenticado o no)</p>
-  <p><strong>Flujo:</strong></p>
-  <ol>
-    <li>El usuario hace clic en un póster (desde carrusel, favoritos o búsqueda).</li>
-    <li>Se abre un modal lateral con la información detallada.</li>
-    <li>El modal carga datos adicionales del backend (<code>GET /api/tmdb/movie/:id</code>).</li>
-    <li>Si hay tráiler disponible, se muestra un reproductor de YouTube.</li>
-    <li>El modal se cierra al hacer clic fuera, en la X, o presionar Escape.</li>
-  </ol>
+    subgraph TMDB["🎥 TMDb API"]
+        API["<b>themoviedb.org</b><br/>Tendencias · Búsqueda<br/>Detalles · Imágenes"]
+    end
 
-  <!-- 4. TECNOLOGÍAS -->
-  <h2>4. Stack Tecnológico</h2>
-  <table>
-    <tr><th>Categoría</th><th>Tecnología</th><th>Uso</th></tr>
-    <tr><td>Frontend</td><td>React 18</td><td>Biblioteca para construir la interfaz de usuario</td></tr>
-    <tr><td>Frontend</td><td>Vite 5</td><td>Empaquetador y servidor de desarrollo rápido</td></tr>
-    <tr><td>Frontend</td><td>React Router 6</td><td>Enrutamiento del lado del cliente (SPA)</td></tr>
-    <tr><td>Frontend</td><td>Tailwind CSS 3</td><td>Framework CSS utility-first para estilos</td></tr>
-    <tr><td>Frontend</td><td>Framer Motion</td><td>Animaciones y transiciones</td></tr>
-    <tr><td>Frontend</td><td>Axioms</td><td>Cliente HTTP para peticiones al backend</td></tr>
-    <tr><td>Backend</td><td>Node.js</td><td>Entorno de ejecución JavaScript</td></tr>
-    <tr><td>Backend</td><td>Express</td><td>Framework web para construir la API REST</td></tr>
-    <tr><td>Backend</td><td>Prisma ORM</td><td>Mapeo objeto-relacional para la base de datos</td></tr>
-    <tr><td>Backend</td><td>JWT (jsonwebtoken)</td><td>Autenticación basada en tokens</td></tr>
-    <tr><td>Backend</td><td>bcrypt</td><td>Hash de contraseñas</td></tr>
-    <tr><td>Backend</td><td>NodeCache</td><td>Caché en memoria para respuestas de TMDb</td></tr>
-    <tr><td>Base de datos</td><td>PostgreSQL (Neon)</td><td>Base de datos relacional en la nube</td></tr>
-    <tr><td>API externa</td><td>TMDb API</td><td>Datos de películas, series, imágenes y tráilers</td></tr>
-    <tr><td>Hosting</td><td>Netlify</td><td>Hosting del frontend (estático)</td></tr>
-    <tr><td>Hosting</td><td>Render / Railway</td><td>Hosting del backend (Node.js)</td></tr>
-  </table>
+    UI -->|"HTTPS"| CDN
+    CDN -->|"deploy push"| UI
+    UI -->|"fetch JSON<br/>/api/*"| BE
+    BE -->|"Prisma ORM"| PG
+    BE -->|"axios + caché"| API
+    API -->|"JSON + imágenes"| BE
+    BE -->|"JSON transformado"| UI
 
-  <!-- 5. ENDPOINTS DE LA API -->
-  <h2>5. Endpoints de la API</h2>
-  <table>
-    <tr><th>Método</th><th>Ruta</th><th>Autenticación</th><th>Descripción</th></tr>
-    <tr><td>POST</td><td>/api/auth/register</td><td>No</td><td>Registrar nuevo usuario</td></tr>
-    <tr><td>POST</td><td>/api/auth/login</td><td>No</td><td>Iniciar sesión</td></tr>
-    <tr><td>GET</td><td>/api/auth/me</td><td>Sí (JWT)</td><td>Verificar sesión actual</td></tr>
-    <tr><td>GET</td><td>/api/favorites</td><td>Sí (JWT)</td><td>Listar favoritos del usuario</td></tr>
-    <tr><td>POST</td><td>/api/favorites</td><td>Sí (JWT)</td><td>Guardar un favorito</td></tr>
-    <tr><td>DELETE</td><td>/api/favorites/:id</td><td>Sí (JWT)</td><td>Eliminar un favorito</td></tr>
-    <tr><td>GET</td><td>/api/tmdb/trending</td><td>No</td><td>Tendencias semanales</td></tr>
-    <tr><td>GET</td><td>/api/tmdb/search</td><td>No</td><td>Buscar contenido (query: q)</td></tr>
-    <tr><td>GET</td><td>/api/tmdb/movie/:id</td><td>No</td><td>Detalles de película</td></tr>
-    <tr><td>GET</td><td>/api/tmdb/tv/:id</td><td>No</td><td>Detalles de serie</td></tr>
-    <tr><td>GET</td><td>/api/tmdb/genre/:genreId</td><td>No</td><td>Descubrir por género</td></tr>
-    <tr><td>GET</td><td>/api/demo/movies</td><td>No</td><td>Datos demo (fallback)</td></tr>
-    <tr><td>GET</td><td>/health</td><td>No</td><td>Health check del servidor</td></tr>
-  </table>
+    style UI fill:#1a2533,stroke:#e50914,color:#fff
+    style BE fill:#1a2533,stroke:#3b82f6,color:#fff
+    style PG fill:#1a2533,stroke:#22c55e,color:#fff
+    style API fill:#1a2533,stroke:#ffd700,color:#fff
+    style CDN fill:#121a24,stroke:#06b6d4,color:#9aa9b9
+    style Render fill:#121a24,stroke:#3b82f6,color:#9aa9b9
+    style Neon fill:#121a24,stroke:#22c55e,color:#9aa9b9
+    style TMDB fill:#121a24,stroke:#ffd700,color:#9aa9b9
+    style Client fill:#0a0e14,stroke:#e50914,color:#e6eef8
+      </div>
+      <p class="caption">Diagrama de flujo general — el frontend nunca llama a TMDb directamente: todo pasa por el backend (proxy).</p>
+    </div>
 
-  <!-- 6. ESQUEMA DE BASE DE DATOS -->
-  <h2>6. Esquema de Base de Datos</h2>
-  <p>Prisma ORM genera las tablas automáticamente. El esquema se define en <code>backend/prisma/schema.prisma</code>:</p>
+    <div class="diagram-wrap">
+      <div class="mermaid">
+sequenceDiagram
+    actor U as 👤 Usuario
+    participant F as ⚛️ Frontend React
+    participant B as 🔧 Backend Express
+    participant D as 🗄️ PostgreSQL
+    participant T as 🎥 TMDb API
 
-  <div class="diagram-box">
-┌─────────────────────┐        ┌──────────────────────────┐
-│       User          │        │        Favorite          │
-├─────────────────────┤        ├──────────────────────────┤
-│ id: Int (PK)        │◄───────│ id: Int (PK)             │
-│ email: String (UQ)  │  1:N   │ userId: Int (FK)         │
-│ password: String    │        │ tmdbId: Int              │
-│ createdAt: DateTime │        │ mediaType: String        │
-└─────────────────────┘        │ title: String            │
-                               │ poster: String?          │
-                               │ createdAt: DateTime      │
-                               └──────────────────────────┘
-  </div>
-  <p>Un <strong>usuario</strong> puede tener muchos <strong>favoritos</strong>. Cada favorito guarda la referencia al contenido de TMDb (tmdbId) junto con metadatos para mostrar sin necesidad de llamar a la API.</p>
+    U->>F: Abre la página principal
+    F->>B: GET /api/tmdb/trending
+    B->>T: GET /trending/movie/week
+    T-->>B: JSON con tendencias
+    B->>B: Transformar + caché (NodeCache)
+    B-->>F: JSON normalizado
+    F-->>U: Renderiza Hero + Carruseles
 
-  <!-- 7. INSTRUCCIONES DE INSTALACIÓN -->
-  <h2>7. Instrucciones de Instalación</h2>
+    U->>F: Clic en póster → detalle
+    F->>B: GET /api/tmdb/movie/:id
+    B->>T: GET /movie/:id?append_to_response=credits,videos
+    T-->>B: Detalle completo
+    B-->>F: Detalle + trailerKey
+    F-->>U: Abre modal con info + tráiler
 
-  <h3>7.1 Requisitos previos</h3>
-  <ul>
-    <li>Node.js 16+</li>
-    <li>npm o yarn</li>
-    <li>Una API key de TMDb (gratis en <a href="https://www.themoviedb.org/settings/api" target="_blank">themoviedb.org</a>)</li>
-    <li>Opcional: Base de datos PostgreSQL (Neon o local)</li>
-  </ul>
+    U->>F: Se registra (email + password)
+    F->>B: POST /api/auth/register
+    B->>B: bcrypt.hash(password)
+    B->>D: INSERT INTO User
+    B-->>F: { user, token: JWT }
+    F-->>U: Sesión activa (localStorage)
+      </div>
+      <p class="caption">Secuencia de los flujos principales: explorar contenido, ver detalle y autenticarse.</p>
+    </div>
 
-  <h3>7.2 Backend</h3>
-  <pre><code># 1. Clonar el repositorio
+    <div class="cards">
+      <div class="card">
+        <div class="icon icon-red">⚛️</div>
+        <h4>Frontend (React + Vite)</h4>
+        <p>SPA con rutas, estado global (Context), búsqueda con debounce, favoritos optimistas y skeletons de carga. Desplegado en Netlify.</p>
+      </div>
+      <div class="card">
+        <div class="icon icon-blue">🔧</div>
+        <h4>Backend (Express)</h4>
+        <p>API REST con auth JWT, CRUD de favoritos y proxy hacia TMDb con caché en memoria. Desplegado en Render.</p>
+      </div>
+      <div class="card">
+        <div class="icon icon-green">🗄️</div>
+        <h4>Base de datos</h4>
+        <p>PostgreSQL gestionado en la nube con Neon. Esquema definido con Prisma ORM y sincronizado con <code>db push</code>.</p>
+      </div>
+      <div class="card">
+        <div class="icon icon-yellow">🎥</div>
+        <h4>TMDb API</h4>
+        <p>Fuente de contenido real: tendencias, búsqueda, detalles, créditos, tráilers e imágenes de películas y series.</p>
+      </div>
+    </div>
+
+    <!-- ══════════ 2. CASOS DE USO ══════════ -->
+    <h2 id="usecases"><span class="num">2</span> Casos de Uso</h2>
+    <p>Cada caso de uso describe el flujo completo desde la acción del usuario hasta la respuesta del sistema.</p>
+
+    <div class="usecase">
+      <div class="usecase-header">
+        <div class="uc-icon icon-red">🏠</div>
+        <h3>Explorar contenido en tendencia</h3>
+        <span class="actor">Usuario anónimo o autenticado</span>
+      </div>
+      <ol class="flow">
+        <li>El usuario ingresa a la página principal <code>/</code>.</li>
+        <li>El frontend solicita <code>GET /api/tmdb/trending?language=es-ES</code> al backend.</li>
+        <li>El backend consulta TMDb, aplica caché (NodeCache) y devuelve las tendencias de la semana.</li>
+        <li>Se muestran los primeros 4 items en el <strong>Hero</strong> (banner con tráiler de fondo si existe) y 12 en el carrusel <strong>«Tendencias»</strong>.</li>
+        <li>Se cargan en paralelo los carruseles por género: Comedia, Animación, Acción y Ciencia Ficción (<code>GET /api/tmdb/genre/:id</code>).</li>
+        <li>El usuario puede navegar los carruseles, cambiar el idioma (ES/EN) o hacer clic en «Ver más» para paginar.</li>
+      </ol>
+    </div>
+
+    <div class="usecase">
+      <div class="usecase-header">
+        <div class="uc-icon icon-blue">🔍</div>
+        <h3>Buscar películas y series</h3>
+        <span class="actor">Usuario anónimo o autenticado</span>
+      </div>
+      <ol class="flow">
+        <li>El usuario escribe en la barra de búsqueda del <strong>Header</strong>.</li>
+        <li>Con <strong>debounce de 300ms</strong>, se consulta <code>GET /api/tmdb/search?q=...</code>.</li>
+        <li>Aparece un dropdown con hasta 8 sugerencias (título + póster en miniatura).</li>
+        <li>Al hacer clic en una sugerencia o presionar Enter, navega a <code>/search?q=...</code>.</li>
+        <li>La página <strong>SearchResults</strong> muestra todos los resultados en grilla con filtros de idioma.</li>
+        <li>Desde cualquier resultado se puede abrir el detalle o guardar como favorito.</li>
+      </ol>
+    </div>
+
+    <div class="usecase">
+      <div class="usecase-header">
+        <div class="uc-icon icon-green">🔐</div>
+        <h3>Registrarse e iniciar sesión</h3>
+        <span class="actor">Usuario no autenticado</span>
+      </div>
+      <ol class="flow">
+        <li>El usuario navega a <code>/auth</code>.</li>
+        <li>Selecciona «Crear cuenta» o «Iniciar sesión».</li>
+        <li>Completa email y contraseña y envía el formulario.</li>
+        <li>El backend valida contra PostgreSQL: en registro hashea con <strong>bcrypt</strong>; en login compara con <code>bcrypt.compare</code>.</li>
+        <li>Si es exitoso, firma un <strong>JWT</strong> (expira en 7 días) con <code>{ id, email }</code>.</li>
+        <li>El frontend guarda el token en <code>localStorage</code> y lo envía en el header <code>Authorization: Bearer</code> en cada petición protegida.</li>
+        <li><code>GET /api/auth/me</code> verifica la sesión al recargar la página.</li>
+      </ol>
+    </div>
+
+    <div class="usecase">
+      <div class="usecase-header">
+        <div class="uc-icon icon-purple">❤️</div>
+        <h3>Guardar y gestionar favoritos</h3>
+        <span class="actor">Usuario autenticado</span>
+      </div>
+      <ol class="flow">
+        <li>El usuario pasa el mouse sobre un póster y hace clic en «Favoritos».</li>
+        <li>Se envía <code>POST /api/favorites</code> con el token JWT y los datos <code>{ tmdbId, mediaType, title, poster }</code>.</li>
+        <li>El backend verifica el token, asocia el favorito al <code>userId</code> y lo persiste en PostgreSQL.</li>
+        <li>En <code>/favorites</code> el usuario ve todos sus favoritos (pueden existir sin conexión a TMDb, porque se guardan los metadatos).</li>
+        <li>Puede <strong>filtrar por tipo</strong> (película / serie) y <strong>buscar localmente</strong> en la grilla.</li>
+        <li>Para eliminar: clic en el botón de favorito → <code>DELETE /api/favorites/:id</code> (verifica que el item pertenezca al usuario).</li>
+      </ol>
+    </div>
+
+    <div class="usecase">
+      <div class="usecase-header">
+        <div class="uc-icon icon-cyan">🎬</div>
+        <h3>Ver detalle y tráiler</h3>
+        <span class="actor">Usuario anónimo o autenticado</span>
+      </div>
+      <ol class="flow">
+        <li>El usuario hace clic en un póster (desde carrusel, favoritos o búsqueda).</li>
+        <li>Se abre un <strong>modal lateral</strong> con la información básica del item.</li>
+        <li>El modal carga datos adicionales: <code>GET /api/tmdb/movie/:id</code> o <code>/api/tmdb/tv/:id</code> (sinopsis, género, rating, créditos).</li>
+        <li>Si hay tráiler disponible, se incrusta un <strong>reproductor de YouTube</strong> (<code>trailerKey</code>).</li>
+        <li>El usuario puede marcar como favorito desde el modal.</li>
+        <li>Se cierra al hacer clic fuera, en la ✕ o presionando <strong>Escape</strong>.</li>
+      </ol>
+    </div>
+
+    <!-- ══════════ 3. STACK ══════════ -->
+    <h2 id="stack"><span class="num">3</span> Stack Tecnológico</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Categoría</th><th>Tecnología</th><th>Uso en el proyecto</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Frontend</td><td>React 18</td><td>Interfaz de usuario, componentes y estado con Context API</td></tr>
+          <tr><td>Frontend</td><td>Vite 5</td><td>Build rápido, HMR en desarrollo y bundle optimizado en producción</td></tr>
+          <tr><td>Frontend</td><td>React Router 6</td><td>Enrutamiento SPA: /, /search, /auth, /favorites, 404</td></tr>
+          <tr><td>Frontend</td><td>Tailwind CSS 3</td><td>Estilos utility-first (tema oscuro estilo Netflix)</td></tr>
+          <tr><td>Frontend</td><td>Framer Motion</td><td>Animaciones y transiciones de entrada/salida</td></tr>
+          <tr><td>Frontend</td><td>Swiper</td><td>Carruseles horizontales con drag y flechas</td></tr>
+          <tr><td>Frontend</td><td>Axios</td><td>Cliente HTTP con timeout de 60s hacia el backend</td></tr>
+          <tr><td>Backend</td><td>Node.js</td><td>Runtime de JavaScript del servidor</td></tr>
+          <tr><td>Backend</td><td>Express 4</td><td>Framework web para la API REST</td></tr>
+          <tr><td>Backend</td><td>Prisma ORM</td><td>Esquema, migraciones y queries tipadas a PostgreSQL</td></tr>
+          <tr><td>Backend</td><td>JWT + bcrypt</td><td>Autenticación con tokens y hash de contraseñas</td></tr>
+          <tr><td>Backend</td><td>NodeCache</td><td>Caché en memoria de respuestas de TMDb (menos latencia, menos rate-limit)</td></tr>
+          <tr><td>Backend</td><td>CORS</td><td>Permite peticiones desde el frontend en desarrollo</td></tr>
+          <tr><td>Base de datos</td><td>PostgreSQL (Neon)</td><td>Base de datos relacional serverless en la nube</td></tr>
+          <tr><td>API externa</td><td>TMDb API v3</td><td>Películas, series, imágenes, tráilers, géneros y búsqueda</td></tr>
+          <tr><td>Hosting FE</td><td>Netlify</td><td>Sitio estático + redirects SPA (netlify.toml)</td></tr>
+          <tr><td>Hosting BE</td><td>Render</td><td>Servidor Node.js con build de Prisma en el deploy</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ══════════ 4. API ══════════ -->
+    <h2 id="api"><span class="num">4</span> Endpoints de la API</h2>
+    <p>El backend expone una API REST bajo <code>http://localhost:4001</code> (local) o la URL de Render (producción).</p>
+
+    <h3>🔐 Autenticación</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Método</th><th>Ruta</th><th>Auth</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr><td><span class="method m-post">POST</span></td><td><code>/api/auth/register</code></td><td><span class="auth-no">Pública</span></td><td>Registrar usuario — hashea password con bcrypt y devuelve JWT</td></tr>
+          <tr><td><span class="method m-post">POST</span></td><td><code>/api/auth/login</code></td><td><span class="auth-no">Pública</span></td><td>Iniciar sesión — valida credenciales y devuelve JWT (7 días)</td></tr>
+          <tr><td><span class="method m-get">GET</span></td><td><code>/api/auth/me</code></td><td><span class="auth-yes">JWT</span></td><td>Verificar sesión actual (devuelve id y email)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>❤️ Favoritos</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Método</th><th>Ruta</th><th>Auth</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr><td><span class="method m-get">GET</span></td><td><code>/api/favorites</code></td><td><span class="auth-yes">JWT</span></td><td>Listar favoritos del usuario autenticado</td></tr>
+          <tr><td><span class="method m-post">POST</span></td><td><code>/api/favorites</code></td><td><span class="auth-yes">JWT</span></td><td>Guardar favorito — recibe tmdbId, mediaType, title, poster</td></tr>
+          <tr><td><span class="method m-delete">DELETE</span></td><td><code>/api/favorites/:id</code></td><td><span class="auth-yes">JWT</span></td><td>Eliminar favorito (verifica pertenencia al usuario)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>🎥 Proxy TMDb</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Método</th><th>Ruta</th><th>Auth</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr><td><span class="method m-get">GET</span></td><td><code>/api/tmdb/trending</code></td><td><span class="auth-no">Pública</span></td><td>Tendencias semanales — params: <code>media</code>, <code>page</code>, <code>language</code></td></tr>
+          <tr><td><span class="method m-get">GET</span></td><td><code>/api/tmdb/search</code></td><td><span class="auth-no">Pública</span></td><td>Buscar contenido — param obligatorio: <code>q</code></td></tr>
+          <tr><td><span class="method m-get">GET</span></td><td><code>/api/tmdb/movie/:id</code></td><td><span class="auth-no">Pública</span></td><td>Detalle de película (incluye tráiler, créditos, géneros)</td></tr>
+          <tr><td><span class="method m-get">GET</span></td><td><code>/api/tmdb/tv/:id</code></td><td><span class="auth-no">Pública</span></td><td>Detalle de serie (temporadas, episodios, tráiler)</td></tr>
+          <tr><td><span class="method m-get">GET</span></td><td><code>/api/tmdb/genre/:genreId</code></td><td><span class="auth-no">Pública</span></td><td>Descubrir contenido por género — params: <code>page</code>, <code>language</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>🧪 Utilidades</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Método</th><th>Ruta</th><th>Auth</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr><td><span class="method m-get">GET</span></td><td><code>/api/demo/movies</code></td><td><span class="auth-no">Pública</span></td><td>Datos demo de respaldo (fallback si falta TMDb API key)</td></tr>
+          <tr><td><span class="method m-get">GET</span></td><td><code>/health</code></td><td><span class="auth-no">Pública</span></td><td>Health check — devuelve status y uptime del proceso</td></tr>
+          <tr><td><span class="method m-get">GET</span></td><td><code>/</code></td><td><span class="auth-no">Pública</span></td><td>Info básica del servicio</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-info">
+      <span class="c-icon">💡</span>
+      <p><strong>¿Por qué un proxy en lugar de llamar a TMDb desde el navegador?</strong>
+      Tres razones: (1) la API key nunca se expone al cliente, (2) se centraliza el caché
+      con NodeCache para reducir latencia y rate-limit, y (3) se transforman las respuestas
+      a un formato uniforme que el frontend consume sin lógica extra.</p>
+    </div>
+
+    <!-- ══════════ 5. BASE DE DATOS ══════════ -->
+    <h2 id="database"><span class="num">5</span> Esquema de Base de Datos</h2>
+    <p>
+      Definido con <strong>Prisma ORM</strong> en <code>backend/prisma/schema.prisma</code>.
+      Sincronizado con <code>npx prisma db push</code>. Dos tablas con relación 1:N.
+    </p>
+
+    <div class="diagram-wrap">
+      <div class="mermaid">
+erDiagram
+    USER ||--o{ FAVORITE : "tiene"
+    USER {
+        Int id PK "autoincrement"
+        String email UK "único"
+        String password "hash bcrypt"
+        DateTime createdAt "default now"
+    }
+    FAVORITE {
+        Int id PK "autoincrement"
+        Int userId FK "→ User.id"
+        Int tmdbId "ID en TMDb"
+        String mediaType "movie | tv"
+        String title "título cacheado"
+        String poster "URL imagen (nullable)"
+        DateTime createdAt "default now"
+    }
+      </div>
+      <p class="caption">Diagrama entidad-relación generado con Mermaid a partir de schema.prisma.</p>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="icon icon-blue">👤</div>
+        <h4>Tabla User</h4>
+        <p><code>id</code> PK · <code>email</code> único · <code>password</code> (bcrypt) · <code>createdAt</code>. Almacena las cuentas registradas.</p>
+      </div>
+      <div class="card">
+        <div class="icon icon-purple">⭐</div>
+        <h4>Tabla Favorite</h4>
+        <p><code>userId</code> FK → User · <code>tmdbId</code> · <code>mediaType</code> · <code>title</code> · <code>poster</code>. Cada fila es un favorito de un usuario.</p>
+      </div>
+    </div>
+
+    <p>
+      Un <strong>usuario</strong> puede tener muchos <strong>favoritos</strong> (relación 1:N).
+      Cada favorito guarda <code>tmdbId</code> + metadatos (título, póster) para poder
+      listarlos <strong>sin volver a llamar a TMDb</strong>.
+    </p>
+
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart LR
+    subgraph FE["⚛️ Frontend"]
+        FAV["/favorites"]
+        CARD["PosterCard"]
+    end
+    subgraph BE["🔧 Backend"]
+        A1["GET /api/favorites"]
+        A2["POST /api/favorites"]
+        A3["DELETE /api/favorites/:id"]
+    end
+    subgraph DB["🗄️ PostgreSQL"]
+        T[("Favorite")]
+    end
+
+    FAV -->|"Bearer JWT"| A1
+    CARD -->|"guardar"| A2
+    CARD -->|"eliminar"| A3
+    A1 --> T
+    A2 --> T
+    A3 --> T
+
+    style FE fill:#1a2533,stroke:#e50914,color:#fff
+    style BE fill:#1a2533,stroke:#3b82f6,color:#fff
+    style DB fill:#1a2533,stroke:#22c55e,color:#fff
+      </div>
+      <p class="caption">Flujo de favoritos — siempre con JWT; el backend valida pertenencia antes de escribir/borrar.</p>
+    </div>
+
+    <!-- ══════════ 6. INSTALACIÓN ══════════ -->
+    <h2 id="install"><span class="num">6</span> Instrucciones de Instalación</h2>
+
+    <div class="callout callout-warn">
+      <span class="c-icon">⚙️</span>
+      <p><strong>Requisitos previos:</strong> Node.js 18+ · npm · API key de TMDb
+      (gratis en <a href="https://www.themoviedb.org/settings/api" target="_blank">themoviedb.org</a>) ·
+      PostgreSQL (Neon o local).</p>
+    </div>
+
+    <div class="install-grid">
+      <div class="install-col">
+        <h4><span class="dot dot-be"></span> Backend — Express + Prisma</h4>
+<pre><code># 1. Clonar
 git clone https://github.com/Maxmoaber/max-tv.git
 cd max-tv/backend
 
-# 2. Instalar dependencias
+# 2. Dependencias
 npm install
 
-# 3. Configurar variables de entorno
+# 3. Variables de entorno
 cp .env.example .env
-# Editar .env con tus valores (TMDB_API_KEY, DATABASE_URL, JWT_SECRET)
+# Editar: TMDB_API_KEY, DATABASE_URL, JWT_SECRET
 
-# 4. Generar cliente Prisma y sincronizar base de datos
+# 4. Base de datos
 npx prisma generate
 npx prisma db push
 
-# 5. Iniciar servidor (desarrollo)
-npm run dev
-
-# El backend estará disponible en http://localhost:4001
-  </code></pre>
-
-  <h3>7.3 Frontend</h3>
-  <pre><code># 1. Ir al directorio del frontend
+# 5. Levantar (http://localhost:4001)
+npm run dev</code></pre>
+      </div>
+      <div class="install-col">
+        <h4><span class="dot dot-fe"></span> Frontend — React + Vite</h4>
+<pre><code># 1. Entrar al frontend (otra terminal)
 cd max-tv/frontend
 
-# 2. Instalar dependencias
+# 2. Dependencias
 npm install
 
-# 3. Configurar variables de entorno
+# 3. Variables de entorno
 cp .env.example .env
-# Editar VITE_BACKEND_URL para apuntar al backend
-# (local: http://localhost:4001, producción: URL del backend)
+# Editar: VITE_BACKEND_URL=http://localhost:4001
 
-# 4. Iniciar servidor de desarrollo
-npm run dev
+# 4. Levantar (http://localhost:5173)
+npm run dev</code></pre>
+      </div>
+    </div>
 
-# El frontend estará disponible en http://localhost:5173
-  </code></pre>
+    <div class="callout callout-ok">
+      <span class="c-icon">✅</span>
+      <p><strong>Verificación:</strong> abre <code>http://localhost:4001/health</code>
+      (debe responder <code>{"status":"ok"}</code>) y luego
+      <code>http://localhost:5173</code> para ver el Home con tendencias reales de TMDb.</p>
+    </div>
 
-  <!-- 8. VARIABLES DE ENTORNO -->
-  <h2>8. Variables de Entorno</h2>
+    <!-- ══════════ 7. ENV ══════════ -->
+    <h2 id="env"><span class="num">7</span> Variables de Entorno</h2>
 
-  <h3>Backend (<code>backend/.env</code>)</h3>
-  <table>
-    <tr><th>Variable</th><th>Descripción</th><th>Ejemplo</th></tr>
-    <tr><td>PORT</td><td>Puerto del servidor</td><td>4001</td></tr>
-    <tr><td>DATABASE_URL</td><td>Conexión a PostgreSQL (Neon)</td><td>postgresql://user:pass@host/db?sslmode=require</td></tr>
-    <tr><td>JWT_SECRET</td><td>Secreto para firmar tokens JWT</td><td>mi_secreto_2024</td></tr>
-    <tr><td>TMDB_API_KEY</td><td>API key de TMDb</td><td>d739d63b62deb1d39bc35e39ac00f1ba</td></tr>
-  </table>
+    <h3>Backend — <code>backend/.env</code></h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Variable</th><th>Descripción</th><th>Ejemplo</th></tr></thead>
+        <tbody>
+          <tr><td><code>PORT</code></td><td>Puerto del servidor Express</td><td><code>4001</code></td></tr>
+          <tr><td><code>DATABASE_URL</code></td><td>Connection string de PostgreSQL (Neon)</td><td><code>postgresql://user:pass@host/db?sslmode=require</code></td></tr>
+          <tr><td><code>JWT_SECRET</code></td><td>Secreto para firmar los tokens JWT</td><td><code>cambia_esto_en_produccion</code></td></tr>
+          <tr><td><code>TMDB_API_KEY</code></td><td>API key de TMDb (v3)</td><td><code>tu_api_key_aqui</code></td></tr>
+        </tbody>
+      </table>
+    </div>
 
-  <h3>Frontend (<code>frontend/.env</code>)</h3>
-  <table>
-    <tr><th>Variable</th><th>Descripción</th><th>Ejemplo</th></tr>
-    <tr><td>VITE_BACKEND_URL</td><td>URL del backend</td><td>http://localhost:4001</td></tr>
-    <tr><td>VITE_TMDB_API_KEY</td><td>API key de TMDb (no se usa actualmente)</td><td>your_key_here</td></tr>
-  </table>
+    <h3>Frontend — <code>frontend/.env</code></h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Variable</th><th>Descripción</th><th>Ejemplo</th></tr></thead>
+        <tbody>
+          <tr><td><code>VITE_BACKEND_URL</code></td><td>URL base del backend</td><td><code>http://localhost:4001</code> · <code>https://max-tv-backend.onrender.com</code></td></tr>
+        </tbody>
+      </table>
+    </div>
 
-  <!-- 9. DESPLIEGUE -->
-  <h2>9. Despliegue</h2>
+    <div class="callout callout-warn">
+      <span class="c-icon">🔐</span>
+      <p>Los archivos <code>.env</code> están en <code>.gitignore</code> y <strong>nunca se commitean</strong>.
+      Solo se versionan los <code>.env.example</code> con placeholders. Nunca subas API keys ni connection strings reales al repositorio.</p>
+    </div>
 
-  <h3>9.1 Frontend (Netlify)</h3>
-  <ol>
-    <li>Conecta el repositorio de GitHub en <a href="https://app.netlify.com" target="_blank">Netlify</a>.</li>
-    <li>Configura el build:
-      <ul>
-        <li>Base directory: <code>frontend</code></li>
-        <li>Build command: <code>npm run build</code></li>
-        <li>Publish directory: <code>dist</code></li>
-      </ul>
-    </li>
-    <li>Agrega la variable de entorno <code>VITE_BACKEND_URL</code> con la URL del backend en producción.</li>
-    <li>Netlify deploya automáticamente al hacer push a la rama configurada.</li>
-  </ol>
+    <!-- ══════════ 8. DESPLIEGUE ══════════ -->
+    <h2 id="deploy"><span class="num">8</span> Despliegue</h2>
 
-  <h3>9.2 Backend (Render / Railway)</h3>
-  <ol>
-    <li>Conecta el repositorio en Render o Railway.</li>
-    <li>Configura:
-      <ul>
-        <li>Root directory: <code>backend</code></li>
-        <li>Build command: <code>npm install && npx prisma generate && npx prisma db push</code></li>
-        <li>Start command: <code>node src/server.js</code></li>
-      </ul>
-    </li>
-    <li>Agrega las variables de entorno: <code>DATABASE_URL</code>, <code>JWT_SECRET</code>, <code>TMDB_API_KEY</code>.</li>
-  </ol>
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart LR
+    GIT["📦 GitHub<br/>Maxmoaber/max-tv"]
+    subgraph CI["Automático en push"]
+        NL["☁️ Netlify<br/>build: frontend/"]
+        RD["☁️ Render<br/>build: backend/"]
+    end
+    PROD_FE["🌐 spiffy-mousse-e419c1.netlify.app"]
+    PROD_BE["🌐 max-tv-backend.onrender.com"]
 
-  <!-- 10. ESTRUCTURA DEL PROYECTO -->
-  <h2>10. Estructura del Proyecto</h2>
-  <div class="diagram-box">
-max-tv/
-├── backend/                    # Servidor Node.js + Express
-│   ├── prisma/
-│   │   └── schema.prisma       # Esquema de base de datos
-│   └── src/
-│       ├── server.js           # Punto de entrada (Express, rutas, JWT)
-│       └── services/
-│           └── tmdb.js         # Integración con TMDb API
+    GIT -->|"push"| NL
+    GIT -->|"push"| RD
+    NL --> PROD_FE
+    RD --> PROD_BE
+    PROD_FE -->|"API calls"| PROD_BE
+
+    style GIT fill:#1a2533,stroke:#e50914,color:#fff
+    style NL fill:#121a24,stroke:#06b6d4,color:#9aa9b9
+    style RD fill:#121a24,stroke:#3b82f6,color:#9aa9b9
+    style PROD_FE fill:#1a2533,stroke:#22c55e,color:#fff
+    style PROD_BE fill:#1a2533,stroke:#ffd700,color:#fff
+      </div>
+      <p class="caption">Pipeline de despliegue — un push a GitHub actualiza frontend y backend en paralelo.</p>
+    </div>
+
+    <div class="install-grid">
+      <div class="install-col">
+        <h4><span class="dot" style="background:var(--cyan)"></span> Frontend — Netlify</h4>
+        <ol style="padding-left:1.2rem; color:var(--text2); font-size:0.88rem;">
+          <li>Conectar repo de GitHub en Netlify.</li>
+          <li>Base directory: <code>frontend</code></li>
+          <li>Build command: <code>npm run build</code></li>
+          <li>Publish directory: <code>dist</code></li>
+          <li>Variable: <code>VITE_BACKEND_URL</code> = URL de Render.</li>
+          <li>Los redirects SPA ya están en <code>netlify.toml</code>.</li>
+        </ol>
+      </div>
+      <div class="install-col">
+        <h4><span class="dot" style="background:var(--blue)"></span> Backend — Render</h4>
+        <ol style="padding-left:1.2rem; color:var(--text2); font-size:0.88rem;">
+          <li>Conectar repo en Render (Web Service).</li>
+          <li>Root directory: <code>backend</code></li>
+          <li>Build: <code>npm install &amp;&amp; npx prisma generate &amp;&amp; npx prisma db push</code></li>
+          <li>Start: <code>node src/server.js</code></li>
+          <li>Variables: <code>DATABASE_URL</code>, <code>JWT_SECRET</code>, <code>TMDB_API_KEY</code>.</li>
+          <li>Bind a <code>0.0.0.0</code> (ya configurado con <code>HOST</code>).</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ══════════ 9. ESTRUCTURA ══════════ -->
+    <h2 id="structure"><span class="num">9</span> Estructura del Proyecto</h2>
+    <div class="tree"><span class="dir">max-tv/</span>
+├── <span class="dir">backend/</span>                    <span class="comment"># Servidor Node.js + Express</span>
+│   ├── <span class="dir">prisma/</span>
+│   │   ├── <span class="file">schema.prisma</span>       <span class="comment"># Esquema User + Favorite</span>
+│   │   └── <span class="file">dev.db</span>              <span class="comment"># SQLite (solo desarrollo local)</span>
+│   ├── <span class="dir">src/</span>
+│   │   ├── <span class="file">server.js</span>           <span class="comment"># Entry: Express, rutas, JWT, proxy TMDb</span>
+│   │   └── <span class="dir">services/</span>
+│   │       └── <span class="file">tmdb.js</span>         <span class="comment"># Cliente TMDb + NodeCache + transform</span>
+│   ├── <span class="file">.env.example</span>           <span class="comment"># Plantilla de variables de entorno</span>
+│   └── <span class="file">package.json</span>
 │
-├── frontend/                   # Cliente React + Vite
-│   ├── index.html              # HTML principal
-│   └── src/
-│       ├── main.jsx            # Punto de entrada React
-│       ├── App.jsx             # Componente raíz (rutas)
-│       ├── styles.css          # Estilos globales + Tailwind
-│       ├── components/         # Componentes reutilizables
-│       │   ├── Header.jsx      # Barra de navegación + búsqueda
-│       │   ├── Footer.jsx      # Pie de página
-│       │   ├── Carousel.jsx    # Carrusel horizontal
-│       │   ├── PosterCard.jsx  # Tarjeta de póster interactiva
-│       │   ├── ModalDetail.jsx # Modal de detalle lateral
-│       │   └── Skeleton.jsx    # Placeholders de carga
-│       ├── context/            # Contextos de React (estado global)
-│       │   ├── AuthContext.jsx # Autenticación (JWT)
-│       │   └── ToastContext.jsx# Notificaciones (toasts)
-│       ├── pages/              # Páginas de la aplicación
-│       │   ├── Home.jsx        # Página principal
-│       │   ├── Auth.jsx        # Login / Registro
-│       │   ├── Favorites.jsx   # Favoritos del usuario
-│       │   ├── SearchResults.jsx # Resultados de búsqueda
-│       │   └── NotFound.jsx    # Página 404
-│       └── utils/              # Utilidades
-│           ├── api.js          # Axios + URL del backend
-│           ├── demoData.js     # Datos demo (fallback)
-│           └── genres.js       # Mapa de IDs de género
+├── <span class="dir">frontend/</span>                  <span class="comment"># Cliente React + Vite</span>
+│   ├── <span class="file">index.html</span>
+│   ├── <span class="dir">src/</span>
+│   │   ├── <span class="file">main.jsx</span>            <span class="comment"># Punto de entrada React</span>
+│   │   ├── <span class="file">App.jsx</span>             <span class="comment"># Rutas de la SPA</span>
+│   │   ├── <span class="file">styles.css</span>          <span class="comment"># Globales + Tailwind</span>
+│   │   ├── <span class="dir">components/</span>
+│   │   │   ├── <span class="file">Header.jsx</span>      <span class="comment"># Nav + búsqueda con debounce</span>
+│   │   │   ├── <span class="file">Footer.jsx</span>
+│   │   │   ├── <span class="file">Carousel.jsx</span>    <span class="comment"># Carrusel Swiper</span>
+│   │   │   ├── <span class="file">PosterCard.jsx</span>   <span class="comment"># Tarjeta con fav toggle</span>
+│   │   │   ├── <span class="file">ModalDetail.jsx</span>  <span class="comment"># Detalle + tráiler</span>
+│   │   │   └── <span class="file">Skeleton.jsx</span>     <span class="comment"># Placeholders de carga</span>
+│   │   ├── <span class="dir">context/</span>
+│   │   │   ├── <span class="file">AuthContext.jsx</span>  <span class="comment"># JWT en localStorage</span>
+│   │   │   └── <span class="file">ToastContext.jsx</span> <span class="comment"># Notificaciones</span>
+│   │   ├── <span class="dir">pages/</span>
+│   │   │   ├── <span class="file">Home.jsx</span>         <span class="comment"># Hero + carruseles</span>
+│   │   │   ├── <span class="file">Auth.jsx</span>         <span class="comment"># Login / Registro</span>
+│   │   │   ├── <span class="file">Favorites.jsx</span>    <span class="comment"># Grilla + filtros</span>
+│   │   │   ├── <span class="file">SearchResults.jsx</span>
+│   │   │   └── <span class="file">NotFound.jsx</span>
+│   │   └── <span class="dir">utils/</span>
+│   │       ├── <span class="file">api.js</span>           <span class="comment"># Axios + VITE_BACKEND_URL</span>
+│   │       ├── <span class="file">demoData.js</span>      <span class="comment"># Fallback sin API key</span>
+│   │       └── <span class="file">genres.js</span>        <span class="comment"># Mapa de IDs de género</span>
+│   └── <span class="file">package.json</span>
 │
-├── netlify.toml                # Configuración de Netlify
-└── README.md
+├── <span class="dir">docs/</span>
+│   └── <span class="file">index.html</span>             <span class="comment"># ← Esta documentación</span>
+├── <span class="file">netlify.toml</span>                <span class="comment"># Config Netlify + redirects SPA</span>
+└── <span class="file">README.md</span></div>
+
+    <!-- ══════════ 10. PACKAGE.JSON ══════════ -->
+    <h2 id="packages"><span class="num">10</span> package.json y package-lock.json</h2>
+
+    <h3>10.1 package.json (backend y frontend)</h3>
+    <p>
+      Cada subproyecto tiene su propio <code>package.json</code>: el manifiesto que npm
+      usa para instalar dependencias y ejecutar scripts.
+    </p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Campo</th><th>Función</th></tr></thead>
+        <tbody>
+          <tr><td><code>name</code> / <code>version</code></td><td>Identificador del paquete</td></tr>
+          <tr><td><code>main</code></td><td>Punto de entrada del servidor (solo backend: <code>src/server.js</code>)</td></tr>
+          <tr><td><code>scripts</code></td><td><code>dev</code> (nodemon / vite), <code>start</code>, <code>build</code>, <code>preview</code></td></tr>
+          <tr><td><code>dependencies</code></td><td>Necesarias en producción: express, prisma/client, react, axios…</td></tr>
+          <tr><td><code>devDependencies</code></td><td>Solo en desarrollo: nodemon, prisma (CLI), vite, tailwindcss…</td></tr>
+          <tr><td><code>private</code></td><td>(frontend) Impide publicar accidentalmente en npm</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>⚠️ <strong>package.json se edita manualmente</strong> al agregar/quitar dependencias — o mejor, con <code>npm install &lt;paquete&gt;</code>, que lo actualiza solo.</p>
+
+    <h3>10.2 package-lock.json</h3>
+    <p>
+      <strong>NO se edita manualmente.</strong> Lo genera npm en cada <code>npm install</code>.
+      Bloquea las <strong>versiones exactas</strong> (con hashes de integridad) de todo el árbol
+      de dependencias para que todos los entornos instalen lo mismo.
+    </p>
+    <ul>
+      <li>Debe versionarse en git → builds reproducibles.</li>
+      <li>Si se elimina, npm lo regenera en el próximo install (puede variar versiones).</li>
+    </ul>
+
+    <h3>10.3 dependencies vs devDependencies</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tipo</th><th>En producción</th><th>Ejemplos</th></tr></thead>
+        <tbody>
+          <tr><td><code>dependencies</code></td><td>Sí — se instalan con <code>npm install --production</code></td><td>express, react, axios, bcrypt, @prisma/client</td></tr>
+          <tr><td><code>devDependencies</code></td><td>No — se omiten en el deploy</td><td>vite, nodemon, tailwindcss, prisma (CLI)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      En Render se ejecuta install de producción: por eso <code>prisma</code> (CLI) está en
+      devDependencies — solo hace falta para migraciones — mientras
+      <code>@prisma/client</code> sí va en dependencies porque se usa en runtime.
+    </p>
+
+    <!-- 11. MEJORAS -->
+    <h2 id="improvements"><span class="num">11</span> Posibles Mejoras Futuras</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="icon icon-red">📺</div>
+        <h4>Reproductor integrado</h4>
+        <p>Reproducir películas/series completas dentro de la plataforma.</p>
+      </div>
+      <div class="card">
+        <div class="icon icon-yellow">🤖</div>
+        <h4>Recomendaciones</h4>
+        <p>Sugerir contenido basado en favoritos e historial de búsqueda.</p>
+      </div>
+      <div class="card">
+        <div class="icon icon-blue">👤</div>
+        <h4>Perfiles de usuario</h4>
+        <p>Múltiples perfiles por cuenta, estilo Netflix.</p>
+      </div>
+      <div class="card">
+        <div class="icon icon-green"> Offline</div>
+        <h4>Modo offline</h4>
+        <p>Caché local de contenido y imágenes para ver sin conexión.</p>
+      </div>
+      <div class="card">
+        <div class="icon icon-purple">⭐</div>
+        <h4>Valoraciones</h4>
+        <p>Permitir a los usuarios calificar y comentar títulos.</p>
+      </div>
+      <div class="card">
+        <div class="icon icon-cyan">🧪</div>
+        <h4>Tests automatizados</h4>
+        <p>Pruebas unitarias (Vitest) y E2E (Cypress/Playwright).</p>
+      </div>
+    </div>
+
+    <footer>
+      <p><strong>Max.tv</strong> — Proyecto desarrollado por Emiliano González &amp; Roque Manuel</p>
+      <p style="margin-top:0.4rem;">
+        <a href="https://github.com/Maxmoaber/max-tv" target="_blank">GitHub</a> ·
+        <a href="https://spiffy-mousse-e419c1.netlify.app/" target="_blank">Demo en vivo</a> ·
+        Documentación generada en 2026
+      </p>
+    </footer>
+
   </div>
-
-  <!-- 11. ARCHIVOS DE CONFIGURACIÓN DE PAQUETES -->
-  <h2>11. Archivos package.json y package-lock.json</h2>
-
-  <h3>11.1 package.json (backend y frontend)</h3>
-  <p>
-    Cada subproyecto (<code>backend/</code> y <code>frontend/</code>) tiene su propio
-    <code>package.json</code>. Este archivo es el manifiesto del proyecto para npm:
-  </p>
-  <ul>
-    <li><strong>name / version:</strong> Identificador del paquete.</li>
-    <li><strong>main:</strong> Punto de entrada del servidor (solo backend).</li>
-    <li><strong>scripts:</strong> Comandos disponibles — <code>npm run dev</code> inicia el servidor de desarrollo, <code>npm start</code> ejecuta el servidor en producción.</li>
-    <li><strong>dependencies:</strong> Paquetes necesarios para que la aplicación funcione en producción (Express, Prisma, React, etc.).</li>
-    <li><strong>devDependencies:</strong> Paquetes solo útiles durante el desarrollo (Nodemon, Vite, Tailwind, etc.).</li>
-    <li><strong>private:</strong> (frontend) Evita publicar accidentalmente el paquete en npm.</li>
-  </ul>
-  <p>
-    ⚠️ <strong>package.json se edita manualmente</strong> cuando se agrega o quita una dependencia mediante <code>npm install &lt;paquete&gt;</code> — npm lo actualiza automáticamente.
-  </p>
-
-  <h3>11.2 package-lock.json</h3>
-  <p>
-    <strong>NO se edita manualmente.</strong> Es generado automáticamente por npm cuando se ejecuta <code>npm install</code>.
-    Su propósito es <strong>bloquear las versiones exactas</strong> de cada dependencia y sus sub-dependencias,
-    para que todos los desarrolladores (y los servidores de producción) instalen exactamente los mismos paquetes.
-  </p>
-  <ul>
-    <li>Contiene el árbol completo de dependencias con versiones exactas, integridad (hashes) y URLs de descarga.</li>
-    <li>Debe incluirse en el repositorio (git) para garantizar builds reproducibles.</li>
-    <li>Si se elimina, npm lo regenera automáticamente en el próximo <code>npm install</code>.</li>
-  </ul>
-
-  <h3>11.3 Diferencia entre dependencies y devDependencies</h3>
-  <table>
-    <tr><th>Tipo</th><th>Incluidas en producción</th><th>Ejemplos</th></tr>
-    <tr><td>dependencies</td><td>Sí</td><td>express, react, axios, bcrypt, prisma/client</td></tr>
-    <tr><td>devDependencies</td><td>No</td><td>vite, nodemon, tailwindcss, prisma (CLI)</td></tr>
-  </table>
-  <p>
-    En el backend de Render se ejecuta <code>npm install --production</code> para evitar instalar herramientas de desarrollo,
-    lo que reduce el tamaño del deploy. Por eso <code>prisma</code> (CLI) está en devDependencies pero
-    <code>@prisma/client</code> está en dependencies — el CLI solo se necesita para migraciones, el client se usa en runtime.
-  </p>
-
-  <!-- 12. POSIBLES MEJORAS -->
-  <h2>11. Posibles Mejoras Futuras</h2>
-  <ul>
-    <li><strong>Reproductor de video integrado:</strong> Reproducir películas/series completas dentro de la plataforma.</li>
-    <li><strong>Sistema de recomendaciones:</strong> Sugerir contenido basado en favoritos e historial.</li>
-    <li><strong>Perfiles de usuario:</strong> Múltiples perfiles por cuenta (estilo Netflix).</li>
-    <li><strong>Modo offline:</strong> Almacenar contenido en caché para ver sin conexión.</li>
-    <li><strong>Valoraciones y reseñas:</strong> Permitir a los usuarios calificar y comentar.</li>
-    <li><strong>Internacionalización completa:</strong> Soporte para más idiomas.</li>
-    <li><strong>Tests automatizados:</strong> Pruebas unitarias y de integración (Jest, Cypress).</li>
-    <li><strong>Modo oscuro/claro:</strong> Alternar entre temas.</li>
-  </ul>
-
-  <footer>
-    Max.tv — Proyecto desarrollado por Emiliano González &amp; Roque Manuel<br>
-    <a href="https://github.com/Maxmoaber/max-tv" target="_blank">GitHub</a>
-  </footer>
-
+  </main>
 </div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      primaryColor: '#1a2533',
+      primaryTextColor: '#e6eef8',
+      primaryBorderColor: '#e50914',
+      lineColor: '#3b82f6',
+      secondaryColor: '#121a24',
+      tertiaryColor: '#0a0e14',
+      background: '#121a24',
+      mainBkg: '#1a2533',
+      nodeBorder: '#e50914',
+      clusterBkg: '#0a0e14',
+      clusterBorder: '#1e2a36',
+      titleColor: '#e6eef8',
+      edgeLabelBackground: '#121a24',
+      fontFamily: 'Inter, system-ui, sans-serif',
+      fontSize: '14px'
+    },
+    flowchart: { curve: 'basis', padding: 16 },
+    sequence: { actorMargin: 40, mirrorActors: false },
+    er: { fontSize: 13 }
+  });
+
+  // Nav activa al hacer scroll
+  const links = document.querySelectorAll('nav.sidebar a');
+  const sections = [...links].map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = [...links].find(l => l.getAttribute('href') === '#' + e.target.id);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
 </body>
 </html>
